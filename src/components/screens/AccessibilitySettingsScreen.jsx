@@ -3,23 +3,22 @@ import {
   Heading,
   Text,
   VStack,
-  SliderRoot as Slider,
+  SliderRoot,
   SliderTrack,
   SliderRange,
   SliderThumb,
-  SwitchRoot as Switch,
+  SwitchRoot,
   Button,
   Grid,
   GridItem,
-  CardRoot as Card,
+  CardRoot,
   CardBody,
-  RadioGroupRoot as RadioGroup,
+  RadioGroupRoot,
   Stack,
-  RadioGroupItem as Radio,
+  RadioGroupItem,
   Flex,
-  TooltipRoot as Tooltip,
+  TooltipRoot,
 } from "@chakra-ui/react";
-import { useColorMode } from "../ui/color-mode";
 import { useAccessibility } from "../../context/AccessibilityContext";
 
 export const AccessibilitySettingsScreen = ({ onNext }) => {
@@ -32,17 +31,6 @@ export const AccessibilitySettingsScreen = ({ onNext }) => {
     setVisualOutline,
   } = useAccessibility();
 
-  const { colorMode, setColorMode } = useColorMode();
-
-  const handleThemeChange = (value) => {
-    setTheme(value);
-    if (value.includes('dark')) {
-      setColorMode('dark');
-    } else {
-      setColorMode('light');
-    }
-  };
-  
   const handleOutlineToggle = (e) => {
     const isChecked = e.target.checked;
     setVisualOutline(isChecked);
@@ -53,9 +41,8 @@ export const AccessibilitySettingsScreen = ({ onNext }) => {
     }
   };
 
-
   return (
-    <Card boxShadow="xl" borderRadius="lg" p={8} width="100%" maxW="800px">
+    <CardRoot boxShadow="xl" borderRadius="lg" p={8} width="100%" maxW="800px">
       <CardBody>
         <VStack spacing={8} textAlign="center">
           <Heading as="h1" size="xl">Accessibility Settings</Heading>
@@ -71,7 +58,7 @@ export const AccessibilitySettingsScreen = ({ onNext }) => {
             <Text fontWeight="bold" fontSize="xl">Text Size</Text>
             <Text>Adjust the size of the text within the application for easier reading.</Text>
             <Flex width="100%" alignItems="center">
-              <Slider
+              <SliderRoot
                 aria-label="font-size-slider"
                 value={[fontSize]}
                 onChange={(val) => setFontSize(val[0])}
@@ -82,22 +69,22 @@ export const AccessibilitySettingsScreen = ({ onNext }) => {
                 <SliderTrack>
                   <SliderRange />
                 </SliderTrack>
-                <Tooltip label={`${fontSize}px`} placement="top" isOpen>
+                <TooltipRoot label={`${fontSize}px`} placement="top" isOpen>
                     <SliderThumb />
-                </Tooltip>
-              </Slider>
+                </TooltipRoot>
+              </SliderRoot>
             </Flex>
 
             <Text fontWeight="bold" fontSize="xl" mt={6}>Color Theme</Text>
             <Text>Select a visual theme to optimize contrast and reduce eye strain.</Text>
-            <RadioGroup onChange={handleThemeChange} value={theme}>
+            <RadioGroupRoot onChange={setTheme} value={theme}>
               <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-                <Radio value="light">Light Mode (Default)</Radio>
-                <Radio value="dark">Dark Mode</Radio>
-                <Radio value="highContrastDark">High Contrast (Dark)</Radio>
-                <Radio value="highContrastLight">High Contrast (Light)</Radio>
+                <RadioGroupItem value="light">Light Mode (Default)</RadioGroupItem>
+                <RadioGroupItem value="dark">Dark Mode</RadioGroupItem>
+                <RadioGroupItem value="highContrastDark">High Contrast (Dark)</RadioGroupItem>
+                <RadioGroupItem value="highContrastLight">High Contrast (Light)</RadioGroupItem>
               </Grid>
-            </RadioGroup>
+            </RadioGroupRoot>
           </VStack>
 
           <VStack spacing={6} width="100%" alignItems="start">
@@ -107,9 +94,9 @@ export const AccessibilitySettingsScreen = ({ onNext }) => {
             <Text>
               Toggle a strong visual outline around buttons, links, and other interactive elements.
             </Text>
-            <Switch isChecked={visualOutline} onChange={handleOutlineToggle}>
+            <SwitchRoot isChecked={visualOutline} onChange={handleOutlineToggle}>
               Activate Visual Outline
-            </Switch>
+            </SwitchRoot>
           </VStack>
 
           <Button colorScheme="blue" size="lg" onClick={onNext} mt={8}>
@@ -117,6 +104,6 @@ export const AccessibilitySettingsScreen = ({ onNext }) => {
           </Button>
         </VStack>
       </CardBody>
-    </Card>
+    </CardRoot>
   );
 };

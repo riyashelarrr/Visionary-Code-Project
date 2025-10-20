@@ -7,6 +7,7 @@ import { AccessibilitySettingsScreen } from "./components/screens/AccessibilityS
 import { CourseScreen } from "./components/screens/CourseScreen";
 import { Flex, Box } from "@chakra-ui/react";
 import { AccessibilityProvider, useAccessibility } from "./context/AccessibilityContext";
+import { ThemeManager } from "./context/ThemeManager";
 
 function AppContent() {
   const [screen, setScreen] = useState(1);
@@ -49,6 +50,7 @@ function App() {
   return (
     <Provider>
       <AccessibilityProvider>
+        <ThemeManager />
         <AppContent />
       </AccessibilityProvider>
     </Provider>

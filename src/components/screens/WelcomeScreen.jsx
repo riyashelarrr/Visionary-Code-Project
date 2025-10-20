@@ -1,7 +1,7 @@
 import {
   Box,
   Button,
-  FieldRoot as Field,
+  FieldRoot,
   FieldLabel,
   Heading,
   Input,
@@ -9,7 +9,7 @@ import {
   VStack,
   Icon,
   HStack,
-  CardRoot as Card,
+  CardRoot,
   CardBody,
   Separator,
 } from "@chakra-ui/react";
@@ -17,7 +17,7 @@ import { FaUser, FaUniversalAccess } from "react-icons/fa";
 
 export const WelcomeScreen = ({ onNext }) => {
   return (
-    <Card boxShadow="xl" borderRadius="lg" p={8} width="100%" maxW="500px">
+    <CardRoot boxShadow="xl" borderRadius="lg" p={8} width="100%" maxW="500px">
       <CardBody>
         <VStack spacing={6} textAlign="center">
           <HStack>
@@ -30,14 +30,14 @@ export const WelcomeScreen = ({ onNext }) => {
           </Text>
           <Separator my={4} />
           <VStack spacing={4} width="100%">
-            <Field id="name">
+            <FieldRoot id="name">
               <FieldLabel>Name</FieldLabel>
               <Input type="text" placeholder="Enter your name" size="lg" />
-            </Field>
-            <Field id="email">
+            </FieldRoot>
+            <FieldRoot id="email">
               <FieldLabel>Email address</FieldLabel>
               <Input type="email" placeholder="Enter your email" size="lg" />
-            </Field>
+            </FieldRoot>
           </VStack>
           <Button colorScheme="blue" size="lg" onClick={onNext} width="100%" mt={4}>
             Next
@@ -47,6 +47,6 @@ export const WelcomeScreen = ({ onNext }) => {
           </Text>
         </VStack>
       </CardBody>
-    </Card>
+    </CardRoot>
   );
 };
