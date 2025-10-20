@@ -15,13 +15,48 @@ import { useColorModeValue } from "../ui/color-mode";
 import { FaPlayCircle } from "react-icons/fa";
 
 const courseVideos = [
-  { id: 1, title: "Introduction to Python", duration: "12:34" },
-  { id: 2, title: "Variables and Data Types", duration: "15:20" },
-  { id: 3, title: "Conditional Logic", duration: "18:55" },
-  { id: 4, title: "Functions and Modules", duration: "22:10" },
-  { id: 5, title: "Loops and Iterators", duration: "25:00" },
-  { id: 6, title: "Data Structures: Lists & Tuples", duration: "20:45" },
-  { id: 7, title: "Data Structures: Dictionaries", duration: "19:30" },
+  {
+    id: 1,
+    title: "Introduction to Python",
+    duration: "12:34",
+    youtubeId: "XoADNxgUXQc",
+  },
+  {
+    id: 2,
+    title: "Variables and Data Types",
+    duration: "15:20",
+    youtubeId: "eWRfhZUzrAc",
+  },
+  {
+    id: 3,
+    title: "Conditional Logic",
+    duration: "18:55",
+    youtubeId: "DZ_v92-I_3Y",
+  },
+  {
+    id: 4,
+    title: "Functions and Modules",
+    duration: "22:10",
+    youtubeId: "9Opi_6k_K-M",
+  },
+  {
+    id: 5,
+    title: "Loops and Iterators",
+    duration: "25:00",
+    youtubeId: "6iF8Xb7Z3wQ",
+  },
+  {
+    id: 6,
+    title: "Data Structures: Lists & Tuples",
+    duration: "20:45",
+    youtubeId: "sf-p-315P-A",
+  },
+  {
+    id: 7,
+    title: "Data Structures: Dictionaries",
+    duration: "19:30",
+    youtubeId: "daefaLgNkw0",
+  },
 ];
 
 export const CourseScreen = () => {
@@ -77,20 +112,16 @@ export const CourseScreen = () => {
       <GridItem>
         <VStack spacing={4} align="stretch">
           <AspectRatio ratio={16 / 9}>
-            <Box
-              bg="black"
-              borderRadius="md"
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-            >
-              <Icon as={FaPlayCircle} w={16} h={16} color="white" />
-            </Box>
+            <iframe
+              title={selectedVideo.title}
+              src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}`}
+              allowFullScreen
+            />
           </AspectRatio>
           <Heading size="lg">{selectedVideo.title}</Heading>
           <Text>
-            Video player with controls for sound and other features will be
-            displayed here.
+            Now playing: {selectedVideo.title}. Use the list on the left to
+            select a different video.
           </Text>
         </VStack>
       </GridItem>
