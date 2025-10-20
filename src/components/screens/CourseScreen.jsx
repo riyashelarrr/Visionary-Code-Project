@@ -71,10 +71,10 @@ export const CourseScreen = () => {
 
   return (
     <Grid
-      templateColumns={{ base: "1fr", md: "1fr 2fr" }}
+      templateColumns={{ base: "1fr", md: "1fr 3fr" }}
       gap={8}
       width="100%"
-      maxW="1200px"
+      maxW="1600px"
       p={4}
     >
       <GridItem>
