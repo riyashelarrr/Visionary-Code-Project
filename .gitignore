@@ -1,0 +1,51 @@
+release
+test-reports
+analytics
+build
+dist-versioned
+tmp
+package
+
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+# dependencies
+node_modules
+
+jira-local
+
+# testing
+coverage
+
+# production
+dist
+
+# storybook
+storybook-dist
+
+# IDEs and editors
+/.idea
+/.vscode
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+Thumbs.db
+
+*.log
+*.properties
+!sonar-project.properties
+*.properties.js
+
+.npm
+logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+lerna-debug.log
+
+# sonarqube
+.scannerwork

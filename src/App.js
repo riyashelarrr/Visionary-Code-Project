@@ -17,14 +17,20 @@ function AppContent() {
     setScreen((prevScreen) => prevScreen + 1);
   };
 
+  const handleBack = () => {
+    setScreen((prevScreen) => Math.max(1, prevScreen - 1));
+  };
+
   const renderScreen = () => {
     switch (screen) {
       case 1:
         return <WelcomeScreen onNext={handleNext} />;
       case 2:
-        return <AccessibilitySettingsScreen onNext={handleNext} />;
+        return (
+          <AccessibilitySettingsScreen onNext={handleNext} onBack={handleBack} />
+        );
       case 3:
-        return <CourseScreen />;
+        return <CourseScreen onNext={handleNext} onBack={handleBack} />;
       default:
         return <WelcomeScreen onNext={handleNext} />;
     }
@@ -36,9 +42,11 @@ function AppContent() {
       <Flex
         as="main"
         flex="1"
+        direction="column"
         justifyContent="center"
         alignItems="center"
-        p={8}
+        p={4}
+        width="100%"
       >
         {renderScreen()}
       </Flex>

@@ -17,7 +17,7 @@ import { FaUser, FaUniversalAccess } from "react-icons/fa";
 
 export const WelcomeScreen = ({ onNext }) => {
   return (
-    <CardRoot boxShadow="xl" borderRadius="lg" p={8} width="100%" maxW="500px">
+    <CardRoot boxShadow="xl" borderRadius="lg" p={8} width="100%" maxW="800px">
       <CardBody>
         <VStack spacing={6} textAlign="center">
           <HStack>

@@ -18,10 +18,11 @@ import {
   RadioGroupItem,
   Flex,
   TooltipRoot,
+  HStack,
 } from "@chakra-ui/react";
 import { useAccessibility } from "../../context/AccessibilityContext";
 
-export const AccessibilitySettingsScreen = ({ onNext }) => {
+export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
   const {
     fontSize,
     setFontSize,
@@ -42,7 +43,7 @@ export const AccessibilitySettingsScreen = ({ onNext }) => {
   };
 
   return (
-    <CardRoot boxShadow="xl" borderRadius="lg" p={8} width="100%" maxW="800px">
+    <CardRoot boxShadow="xl" borderRadius="lg" p={8} width="100%" maxW="1200px">
       <CardBody>
         <VStack spacing={8} textAlign="center">
           <Heading as="h1" size="xl">Accessibility Settings</Heading>
@@ -99,9 +100,14 @@ export const AccessibilitySettingsScreen = ({ onNext }) => {
             </SwitchRoot>
           </VStack>
 
-          <Button colorScheme="blue" size="lg" onClick={onNext} mt={8}>
-            Start Learning
-          </Button>
+          <HStack mt={8}>
+            <Button colorScheme="gray" size="lg" onClick={onBack}>
+              Back
+            </Button>
+            <Button colorScheme="blue" size="lg" onClick={onNext}>
+              Start Learning
+            </Button>
+          </HStack>
         </VStack>
       </CardBody>
     </CardRoot>
