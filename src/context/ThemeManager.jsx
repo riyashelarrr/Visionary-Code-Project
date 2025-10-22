@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React from 'react';
 import { useAccessibility } from './AccessibilityContext';
 import { useColorMode } from '../components/ui/color-mode';
 
@@ -22,42 +22,40 @@ const highContrastLightStyles = `
   }
 `;
 
+const applyTheme = (theme, setColorMode) => {
+  document.body.classList.remove('light', 'dark', 'highContrastLight', 'highContrastDark');
+  document.body.classList.add(theme);
+
+  if (theme.includes('dark')) {
+    setColorMode('dark');
+  } else {
+    setColorMode('light');
+  }
+
+  const styleTagId = 'high-contrast-styles';
+  let styleTag = document.getElementById(styleTagId);
+  if (!styleTag) {
+    styleTag = document.createElement('style');
+    styleTag.id = styleTagId;
+    document.head.appendChild(styleTag);
+  }
+  
+  let styles = '';
+  if (theme === 'highContrastDark') {
+    styles = highContrastDarkStyles;
+  } else if (theme === 'highContrastLight') {
+    styles = highContrastLightStyles;
+  }
+  
+  styleTag.innerHTML = styles;
+};
+
 export const ThemeManager = () => {
   const { theme } = useAccessibility();
   const { setColorMode } = useColorMode();
 
-  useEffect(() => {
-    // Remove all theme classes
-    document.body.classList.remove('light', 'dark', 'highContrastLight', 'highContrastDark');
-
-    // Add the current theme class
-    document.body.classList.add(theme);
-
-    // Set the base color mode for Chakra
-    if (theme.includes('dark')) {
-      setColorMode('dark');
-    } else {
-      setColorMode('light');
-    }
-
-    // Inject high-contrast styles
-    const styleTagId = 'high-contrast-styles';
-    let styleTag = document.getElementById(styleTagId);
-    if (!styleTag) {
-      styleTag = document.createElement('style');
-      styleTag.id = styleTagId;
-      document.head.appendChild(styleTag);
-    }
-    
-    let styles = '';
-    if (theme === 'highContrastDark') {
-      styles = highContrastDarkStyles;
-    } else if (theme === 'highContrastLight') {
-      styles = highContrastLightStyles;
-    }
-    
-    styleTag.innerHTML = styles;
-
+  React.useLayoutEffect(() => {
+    applyTheme(theme, setColorMode);
   }, [theme, setColorMode]);
 
   return null;
