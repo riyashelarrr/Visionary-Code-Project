@@ -8,6 +8,10 @@ import {
   Flex,
   HStack,
   chakra,
+  Slider,
+  useSlider,
+  Tooltip,
+  RadioGroup,
 } from "@chakra-ui/react";
 import { useColorModeValue } from "../ui/color-mode";
 import { useAccessibility } from "../../context/AccessibilityContext";
@@ -36,13 +40,13 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
     setVisualOutline,
   } = useAccessibility();
 
-  const handleFontSizeChange = (e) => {
-    setFontSize(parseInt(e.target.value, 10));
-  };
-
-  const handleThemeChange = (e) => {
-    setTheme(e.target.value);
-  };
+  const slider = useSlider({
+    min: 12,
+    max: 24,
+    step: 1,
+    value: [fontSize],
+    onValueChange: (details) => setFontSize(details.value[0]),
+  });
 
   const handleOutlineToggle = (e) => {
     const isChecked = e.target.checked;
@@ -81,18 +85,16 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
             Adjust the size of the text within the application for easier reading.
           </Text>
           <Flex width="100%" alignItems="center">
-            <chakra.input
-              type="range"
-              min="12"
-              max="24"
-              step="1"
-              value={fontSize}
-              onChange={handleFontSizeChange}
-              width="100%"
-              sx={{
-                accentColor: "blue.500",
-              }}
-            />
+            <Slider.RootProvider value={slider} width="100%">
+              <Slider.Control>
+                <Slider.Track>
+                  <Slider.Range />
+                </Slider.Track>
+                <Tooltip.Root label={`${fontSize}px`} placement="top" isOpen>
+                  <Slider.Thumb />
+                </Tooltip.Root>
+              </Slider.Control>
+            </Slider.RootProvider>
             <Text ml={4} width="40px" textAlign="right">
               {fontSize}px
             </Text>
@@ -104,46 +106,30 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
           <Text>
             Select a visual theme to optimize contrast and reduce eye strain.
           </Text>
-          <Box onChange={handleThemeChange} width="100%">
+          <RadioGroup.Root onValueChange={(details) => setTheme(details.value)} value={theme}>
             <Grid templateColumns="repeat(2, 1fr)" gap={4}>
-              <chakra.label>
-                <chakra.input
-                  type="radio"
-                  name="theme"
-                  value="light"
-                  defaultChecked={theme === "light"}
-                />{" "}
-                Light Mode (Default)
-              </chakra.label>
-              <chakra.label>
-                <chakra.input
-                  type="radio"
-                  name="theme"
-                  value="dark"
-                  defaultChecked={theme === "dark"}
-                />{" "}
-                Dark Mode
-              </chakra.label>
-              <chakra.label>
-                <chakra.input
-                  type="radio"
-                  name="theme"
-                  value="highContrastDark"
-                  defaultChecked={theme === "highContrastDark"}
-                />{" "}
-                High Contrast (Dark)
-              </chakra.label>
-              <chakra.label>
-                <chakra.input
-                  type="radio"
-                  name="theme"
-                  value="highContrastLight"
-                  defaultChecked={theme === "highContrastLight"}
-                />{" "}
-                High Contrast (Light)
-              </chakra.label>
+              <RadioGroup.Item value="light">
+                <RadioGroup.ItemHiddenInput />
+                <RadioGroup.ItemIndicator />
+                <RadioGroup.ItemText>Light Mode (Default)</RadioGroup.ItemText>
+              </RadioGroup.Item>
+              <RadioGroup.Item value="dark">
+                <RadioGroup.ItemHiddenInput />
+                <RadioGroup.ItemIndicator />
+                <RadioGroup.ItemText>Dark Mode</RadioGroup.ItemText>
+              </RadioGroup.Item>
+              <RadioGroup.Item value="highContrastDark">
+                <RadioGroup.ItemHiddenInput />
+                <RadioGroup.ItemIndicator />
+                <RadioGroup.ItemText>High Contrast (Dark)</RadioGroup.ItemText>
+              </RadioGroup.Item>
+              <RadioGroup.Item value="highContrastLight">
+                <RadioGroup.ItemHiddenInput />
+                <RadioGroup.ItemIndicator />
+                <RadioGroup.ItemText>High Contrast (Light)</RadioGroup.ItemText>
+              </RadioGroup.Item>
             </Grid>
-          </Box>
+          </RadioGroup.Root>
         </VStack>
 
         <VStack spacing={6} width="100%" alignItems="start">
