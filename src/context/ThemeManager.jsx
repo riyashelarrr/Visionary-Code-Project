@@ -62,6 +62,11 @@ const applyVisualOutline = (isChecked) => {
 
   const styles = isChecked
     ? `
+      button, a, input[type="radio"], input[type="checkbox"], [role="button"], [role="slider"], [role="switch"] {
+        outline: 2px solid #3182ce !important;
+        outline-offset: 2px;
+      }
+
       [data-focus-visible] {
         outline: 4px solid #3182ce !important;
         box-shadow: none !important;
