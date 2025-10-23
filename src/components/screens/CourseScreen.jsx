@@ -46,6 +46,36 @@ const courseVideos = [
     description: "Learn about conditional statements in Python.",
     youtubeId: "306kEUrTxJo",
   },
+  {
+    id: 6,
+    title: "Module 6: Loops",
+    description: "Learn about loops in Python.",
+    youtubeId: "vAFCn_fZmu8",
+  },
+  {
+    id: 7,
+    title: "Module 7: Functions",
+    description: "Learn about functions in Python.",
+    youtubeId: "oO7ufW7jnO0",
+  },
+  {
+    id: 8,
+    title: "Module 8: Collections",
+    description: "Learn about collections in Python.",
+    youtubeId: "35PQlrukzgE",
+  },
+  {
+    id: 9,
+    title: "Module 9: Libraries",
+    description: "Learn about libraries in Python.",
+    youtubeId: "BBw2quQB2Io",
+  },
+  {
+    id: 10,
+    title: "Module 10: File Handling & Exceptions",
+    description: "Learn about file handling and exceptions in Python.",
+    youtubeId: "ol_SYwSvsF8",
+  },
 ];
 
 export const CourseScreen = ({ onNext, onNavigateToAccessibility }) => {

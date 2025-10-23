@@ -12,6 +12,7 @@ import {
   useSlider,
   Tooltip,
   RadioGroup,
+  Switch,
 } from "@chakra-ui/react";
 import { useColorModeValue } from "../ui/color-mode";
 import { useAccessibility } from "../../context/AccessibilityContext";
@@ -33,10 +34,6 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
     value: [fontSize],
     onValueChange: (details) => setFontSize(details.value[0]),
   });
-
-  const handleOutlineToggle = (e) => {
-    setVisualOutline(e.target.checked);
-  };
 
   const cardBg = useColorModeValue("white", "gray.700");
 
@@ -124,14 +121,16 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
             Toggle a strong visual outline around buttons, links, and other
             interactive elements.
           </Text>
-          <chakra.label>
-            <chakra.input
-              type="checkbox"
-              checked={visualOutline}
-              onChange={handleOutlineToggle}
-            />{" "}
-            Activate Visual Outline
-          </chakra.label>
+          <Switch.Root
+            checked={visualOutline}
+            onCheckedChange={(details) => setVisualOutline(details.checked)}
+          >
+            <Switch.HiddenInput />
+            <Switch.Control>
+              <Switch.Thumb />
+            </Switch.Control>
+            <Switch.Label>Activate Visual Outline</Switch.Label>
+          </Switch.Root>
         </VStack>
 
         <HStack mt={8}>

@@ -51,23 +51,23 @@ const applyTheme = (theme, setColorMode) => {
 };
 
 const applyVisualOutline = (isChecked) => {
-  const styleTagId = 'visual-outline-styles';
+  const styleTagId = "visual-outline-styles";
   let styleTag = document.getElementById(styleTagId);
 
   if (!styleTag) {
-    styleTag = document.createElement('style');
+    styleTag = document.createElement("style");
     styleTag.id = styleTagId;
     document.head.appendChild(styleTag);
   }
 
   const styles = isChecked
     ? `
-      *:focus-visible {
-        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6) !important;
-        outline: 2px solid transparent !important;
+      [data-focus-visible] {
+        outline: 4px solid #3182ce !important;
+        box-shadow: none !important;
       }
     `
-    : '';
+    : "";
 
   styleTag.innerHTML = styles;
 };
