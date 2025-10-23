@@ -11,6 +11,7 @@ import { ThemeManager } from "./context/ThemeManager";
 
 function AppContent() {
   const [screen, setScreen] = useState(1);
+  const [previousScreen, setPreviousScreen] = useState(null);
   const { fontSize } = useAccessibility();
 
   const handleNext = () => {
@@ -18,7 +19,17 @@ function AppContent() {
   };
 
   const handleBack = () => {
-    setScreen((prevScreen) => Math.max(1, prevScreen - 1));
+    if (previousScreen) {
+      setScreen(previousScreen);
+      setPreviousScreen(null);
+    } else {
+      setScreen((prevScreen) => Math.max(1, prevScreen - 1));
+    }
+  };
+
+  const navigateToAccessibility = () => {
+    setPreviousScreen(screen);
+    setScreen(2);
   };
 
   const renderScreen = () => {
@@ -30,7 +41,12 @@ function AppContent() {
           <AccessibilitySettingsScreen onNext={handleNext} onBack={handleBack} />
         );
       case 3:
-        return <CourseScreen onNext={handleNext} onBack={handleBack} />;
+        return (
+          <CourseScreen
+            onNext={handleNext}
+            onNavigateToAccessibility={navigateToAccessibility}
+          />
+        );
       default:
         return <WelcomeScreen onNext={handleNext} />;
     }

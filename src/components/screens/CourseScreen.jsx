@@ -48,7 +48,7 @@ const courseVideos = [
   },
 ];
 
-export const CourseScreen = ({ onNext, onBack }) => {
+export const CourseScreen = ({ onNext, onNavigateToAccessibility }) => {
   const [selectedVideo, setSelectedVideo] = useState(courseVideos[0]);
 
   const handleVideoSelect = (video) => {
@@ -139,7 +139,7 @@ export const CourseScreen = ({ onNext, onBack }) => {
         </GridItem>
       </Grid>
       <HStack>
-        <Button onClick={onBack}>Back</Button>
+        <Button onClick={onNavigateToAccessibility}>Accessibility</Button>
         <Button onClick={onNext} colorScheme="blue">
           Next
         </Button>
