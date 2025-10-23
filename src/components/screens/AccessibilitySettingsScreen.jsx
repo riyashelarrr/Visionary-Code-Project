@@ -16,20 +16,6 @@ import {
 import { useColorModeValue } from "../ui/color-mode";
 import { useAccessibility } from "../../context/AccessibilityContext";
 
-const applyVisualOutline = (isChecked) => {
-  if (isChecked) {
-    document.documentElement.style.setProperty(
-      "--chakra-shadows-outline",
-      "0 0 0 3px rgba(66, 153, 225, 0.6)"
-    );
-  } else {
-    document.documentElement.style.setProperty(
-      "--chakra-shadows-outline",
-      "none"
-    );
-  }
-};
-
 export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
   const {
     fontSize,
@@ -49,9 +35,7 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
   });
 
   const handleOutlineToggle = (e) => {
-    const isChecked = e.target.checked;
-    setVisualOutline(isChecked);
-    applyVisualOutline(isChecked);
+    setVisualOutline(e.target.checked);
   };
 
   const cardBg = useColorModeValue("white", "gray.700");

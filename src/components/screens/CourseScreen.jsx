@@ -55,6 +55,28 @@ export const CourseScreen = ({ onNext, onBack }) => {
     setSelectedVideo(video);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+
+    e.preventDefault();
+
+    const currentIndex = courseVideos.findIndex(
+      (v) => v.id === selectedVideo.id
+    );
+
+    let nextIndex;
+    if (e.key === "ArrowDown") {
+      nextIndex =
+        currentIndex === courseVideos.length - 1
+          ? currentIndex
+          : currentIndex + 1;
+    } else {
+      nextIndex = currentIndex === 0 ? currentIndex : currentIndex - 1;
+    }
+
+    setSelectedVideo(courseVideos[nextIndex]);
+  };
+
   const listItemBg = useColorModeValue("gray.100", "gray.700");
   const selectedListItemBg = useColorModeValue("blue.100", "blue.800");
 
@@ -68,7 +90,13 @@ export const CourseScreen = ({ onNext, onBack }) => {
         p={4}
       >
         <GridItem>
-          <VStack spacing={4} align="stretch">
+          <VStack
+            spacing={4}
+            align="stretch"
+            onKeyDown={handleKeyDown}
+            tabIndex={0}
+            role="listbox"
+          >
             <Heading size="lg">Python Course</Heading>
             {courseVideos.map((video) => (
               <Link

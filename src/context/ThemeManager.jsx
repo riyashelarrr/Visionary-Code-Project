@@ -50,13 +50,36 @@ const applyTheme = (theme, setColorMode) => {
   styleTag.innerHTML = styles;
 };
 
+const applyVisualOutline = (isChecked) => {
+  const styleTagId = 'visual-outline-styles';
+  let styleTag = document.getElementById(styleTagId);
+
+  if (!styleTag) {
+    styleTag = document.createElement('style');
+    styleTag.id = styleTagId;
+    document.head.appendChild(styleTag);
+  }
+
+  const styles = isChecked
+    ? `
+      *:focus-visible {
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6) !important;
+        outline: 2px solid transparent !important;
+      }
+    `
+    : '';
+
+  styleTag.innerHTML = styles;
+};
+
 export const ThemeManager = () => {
-  const { theme } = useAccessibility();
+  const { theme, visualOutline } = useAccessibility();
   const { setColorMode } = useColorMode();
 
   React.useLayoutEffect(() => {
     applyTheme(theme, setColorMode);
-  }, [theme, setColorMode]);
+    applyVisualOutline(visualOutline);
+  }, [theme, setColorMode, visualOutline]);
 
   return null;
 };
