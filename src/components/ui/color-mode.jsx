@@ -5,6 +5,7 @@ import { ThemeProvider, useTheme } from 'next-themes'
 
 import * as React from 'react'
 import { LuMoon, LuSun } from 'react-icons/lu'
+import { useAccessibility } from '../../context/AccessibilityContext'
 
 export function ColorModeProvider(props) {
   return (
@@ -37,7 +38,15 @@ export function ColorModeIcon() {
 
 export const ColorModeButton = React.forwardRef(
   function ColorModeButton(props, ref) {
-    const { toggleColorMode } = useColorMode()
+    const { theme, setTheme } = useAccessibility();
+
+    const toggleColorMode = () => {
+      const isDark = theme === 'dark' || theme === 'highContrastDark';
+      setTheme(isDark ? 'light' : 'dark');
+    };
+
+    const isDark = theme === 'dark' || theme === 'highContrastDark';
+
     return (
       <ClientOnly fallback={<Skeleton boxSize='9' />}>
         <IconButton
@@ -54,7 +63,7 @@ export const ColorModeButton = React.forwardRef(
             },
           }}
         >
-          <ColorModeIcon />
+          {isDark ? <LuMoon /> : <LuSun />}
         </IconButton>
       </ClientOnly>
     )
