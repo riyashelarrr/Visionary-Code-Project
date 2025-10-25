@@ -77,14 +77,19 @@ const applyVisualOutline = (isChecked) => {
   styleTag.innerHTML = styles;
 };
 
+const applyFontSize = (fontSize) => {
+  document.documentElement.style.fontSize = `${fontSize}px`;
+};
+
 export const ThemeManager = () => {
-  const { theme, visualOutline } = useAccessibility();
+  const { theme, visualOutline, fontSize } = useAccessibility();
   const { setColorMode } = useColorMode();
 
   React.useLayoutEffect(() => {
     applyTheme(theme, setColorMode);
     applyVisualOutline(visualOutline);
-  }, [theme, setColorMode, visualOutline]);
+    applyFontSize(fontSize);
+  }, [theme, setColorMode, visualOutline, fontSize]);
 
   return null;
 };

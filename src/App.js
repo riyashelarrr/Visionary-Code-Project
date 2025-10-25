@@ -5,14 +5,14 @@ import { Header } from "./components/Header";
 import { WelcomeScreen } from "./components/screens/WelcomeScreen";
 import { AccessibilitySettingsScreen } from "./components/screens/AccessibilitySettingsScreen";
 import { CourseScreen } from "./components/screens/CourseScreen";
+import { QuizScreen } from "./components/screens/QuizScreen";
 import { Flex, Box } from "@chakra-ui/react";
-import { AccessibilityProvider, useAccessibility } from "./context/AccessibilityContext";
+import { AccessibilityProvider } from "./context/AccessibilityContext";
 import { ThemeManager } from "./context/ThemeManager";
 
 function AppContent() {
   const [screen, setScreen] = useState(1);
   const [previousScreen, setPreviousScreen] = useState(null);
-  const { fontSize } = useAccessibility();
 
   const handleNext = () => {
     setScreen((prevScreen) => prevScreen + 1);
@@ -47,13 +47,15 @@ function AppContent() {
             onNavigateToAccessibility={navigateToAccessibility}
           />
         );
+      case 4:
+        return <QuizScreen onNavigateToAccessibility={navigateToAccessibility} />;
       default:
         return <WelcomeScreen onNext={handleNext} />;
     }
   };
 
   return (
-    <Box className="App" style={{ fontSize: `${fontSize}px` }}>
+    <Box className="App">
       <Header />
       <Flex
         as="main"
