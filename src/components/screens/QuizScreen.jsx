@@ -15,10 +15,29 @@ import {
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { quizData } from "../../data/quizData";
 import { useColorModeValue } from "../ui/color-mode";
+import jsPDF from "jspdf";
+import certificateBg from "../../assets/certificate.jpg";
 
 const allQuestions = quizData.flatMap((module) => module.questions);
 
-const ResultsScreen = ({ userAnswers, onRestart }) => {
+const ResultsScreen = ({ userAnswers, onRestart, userName }) => {
+  const handleDownloadCertificate = () => {
+    const pdf = new jsPDF({
+      orientation: "landscape",
+      unit: "px",
+      format: [1000, 700],
+    });
+
+    pdf.addImage(certificateBg, "JPEG", 0, 0, 1000, 700);
+
+    pdf.setFont("Times", "italic");
+    pdf.setFontSize(40);
+    pdf.setTextColor("#3a3a3a");
+    pdf.text(userName, 400, 250, { align: "center" });
+
+    pdf.save(`${userName}_Python_Certificate.pdf`);
+  };
+
   const score = useMemo(
     () =>
       allQuestions.reduce((acc, question, index) => {
@@ -61,6 +80,19 @@ const ResultsScreen = ({ userAnswers, onRestart }) => {
             </Text>
           </Text>
         </Box>
+
+        <HStack spacing={4} justify="center">
+          <Button onClick={onRestart} colorScheme="blue" size="lg">
+            Try Again
+          </Button>
+          <Button
+            onClick={handleDownloadCertificate}
+            colorScheme="green"
+            size="lg"
+          >
+            Download Certificate
+          </Button>
+        </HStack>
 
         <VStack spacing={6} align="stretch" width="100%">
           <Heading size="lg" color={headingColor} textAlign="center">
@@ -106,16 +138,12 @@ const ResultsScreen = ({ userAnswers, onRestart }) => {
             );
           })}
         </VStack>
-
-        <Button onClick={onRestart} colorScheme="blue" size="lg">
-          Try Again
-        </Button>
       </VStack>
     </Box>
   );
 };
 
-export const QuizScreen = ({ onNavigateToAccessibility }) => {
+export const QuizScreen = ({ onNavigateToAccessibility, userName }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState(
     Array(allQuestions.length).fill(null)
@@ -158,7 +186,11 @@ export const QuizScreen = ({ onNavigateToAccessibility }) => {
 
   if (showResults) {
     return (
-      <ResultsScreen userAnswers={userAnswers} onRestart={handleRestart} />
+      <ResultsScreen
+        userAnswers={userAnswers}
+        onRestart={handleRestart}
+        userName={userName}
+      />
     );
   }
 

@@ -13,8 +13,12 @@ import { ThemeManager } from "./context/ThemeManager";
 function AppContent() {
   const [screen, setScreen] = useState(1);
   const [previousScreen, setPreviousScreen] = useState(null);
+  const [userName, setUserName] = useState("");
 
-  const handleNext = () => {
+  const handleNext = (name) => {
+    if (typeof name === "string" && name) {
+      setUserName(name);
+    }
     setScreen((prevScreen) => prevScreen + 1);
   };
 
@@ -48,7 +52,12 @@ function AppContent() {
           />
         );
       case 4:
-        return <QuizScreen onNavigateToAccessibility={navigateToAccessibility} />;
+        return (
+          <QuizScreen
+            userName={userName}
+            onNavigateToAccessibility={navigateToAccessibility}
+          />
+        );
       default:
         return <WelcomeScreen onNext={handleNext} />;
     }

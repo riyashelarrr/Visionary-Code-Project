@@ -1,6 +1,6 @@
 export const quizData = [
   {
-    module: "Module 1 – Introduction to Python",
+    module: "Module 1 – Python Basics: printing, comments, and program setup",
     questions: [
       {
         id: "1-1",
@@ -158,7 +158,8 @@ export const quizData = [
     ],
   },
   {
-    module: "Module 2 – Variable and Data Types",
+    module:
+      "Module 2 – Variables & Data Types: variables, data types, and naming conventions",
     questions: [
       {
         id: "2-1",
@@ -273,7 +274,8 @@ export const quizData = [
     ],
   },
   {
-    module: "Module 3 - Operators and Expressions",
+    module:
+      "Module 3 - Operators & Expressions: arithmetic, comparison, and logical operators",
     questions: [
       {
         id: "3-1",
@@ -380,7 +382,7 @@ export const quizData = [
     ],
   },
   {
-    module: "Module 4 – Input & Output",
+    module: "Module 4 – Input & Output: input/output handling and type conversion",
     questions: [
       {
         id: "4-1",
