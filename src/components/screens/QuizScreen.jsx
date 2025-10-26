@@ -10,6 +10,7 @@ import {
   Icon,
   Progress,
   RadioGroup,
+  Spacer,
 } from "@chakra-ui/react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { quizData } from "../../data/quizData";
@@ -274,6 +275,7 @@ export const QuizScreen = ({ onNavigateToAccessibility }) => {
             <Button onClick={onNavigateToAccessibility} variant="outline">
               Accessibility
             </Button>
+            <Spacer />
             <HStack>
               <Button
                 onClick={handleBack}
@@ -281,17 +283,22 @@ export const QuizScreen = ({ onNavigateToAccessibility }) => {
               >
                 Back
               </Button>
-              {currentQuestionIndex === allQuestions.length - 1 ? (
-                <Button onClick={handleSubmit} colorScheme="blue">
-                  Submit
-                </Button>
-              ) : (
+              {currentQuestionIndex < allQuestions.length - 1 && (
                 <Button onClick={handleNext} colorScheme="blue">
                   Next
                 </Button>
               )}
             </HStack>
           </HStack>
+          <Button
+            onClick={handleSubmit}
+            colorScheme="blue"
+            width="full"
+            mt={4}
+            size="lg"
+          >
+            Submit
+          </Button>
         </VStack>
       </Box>
     </Box>

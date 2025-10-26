@@ -272,4 +272,241 @@ export const quizData = [
       },
     ],
   },
+  {
+    module: "Module 3 - Operators and Expressions",
+    questions: [
+      {
+        id: "3-1",
+        question: "What is the result of this expression?\n\n5 + 3 * 2",
+        options: ["16", "11", "13", "10"],
+        answer: "11",
+      },
+      {
+        id: "3-2",
+        question:
+          "Which operator is used for exponentiation (raising to a power) in Python?",
+        options: ["^", "**", "^^", "pow"],
+        answer: "**",
+      },
+      {
+        id: "3-3",
+        question: "What will 10 % 3 return?",
+        options: ["3", "1", "0", "10"],
+        answer: "1",
+      },
+      {
+        id: "3-4",
+        question: "What will this code output?\n\nx = 9 // 2\n\nprint(x)",
+        options: ["4.5", "5", "4", "Error"],
+        answer: "4",
+      },
+      {
+        id: "3-5",
+        question: "What does the expression a == b do?",
+        options: [
+          "Checks if a and b are equal",
+          "Assigns the value of b to a",
+          "Returns the smaller of a and b",
+          "Compares data types only",
+        ],
+        answer: "Checks if a and b are equal",
+      },
+      {
+        id: "3-6",
+        question: "What is the result of this comparison?\n\n4 != 5",
+        options: ["False", "True", "None", "Error"],
+        answer: "True",
+      },
+      {
+        id: "3-7",
+        question: "Which operator returns True only if both conditions are True?",
+        options: ["or", "not", "and", "xor"],
+        answer: "and",
+      },
+      {
+        id: "3-8",
+        question: "What does this expression evaluate to?\n\nTrue or False and False",
+        options: ["True", "False", "None", "Error"],
+        answer: "True",
+      },
+      {
+        id: "3-9",
+        question: "What is the output of:\n\nnot (5 > 2)",
+        options: ["True", "False", "None", "Error"],
+        answer: "False",
+      },
+      {
+        id: "3-10",
+        question: "Which of the following expressions will evaluate to True?",
+        options: [
+          "5 > 10 and 10 > 5",
+          "3 < 4 or 4 < 3",
+          "not (5 == 5)",
+          "8 == 4 * 3",
+        ],
+        answer: "3 < 4 or 4 < 3",
+      },
+      {
+        id: "3-11",
+        question:
+          "What is the result of combining operators like this?\n\nx = (3 + 2) * (4 - 1)",
+        options: ["15", "9", "12", "5"],
+        answer: "15",
+      },
+      {
+        id: "3-12",
+        question: "Which operator has the highest precedence in Python?",
+        options: ["and", "or", "not", "**"],
+        answer: "**",
+      },
+      {
+        id: "3-13",
+        question: "What does this expression return?\n\n10 / 3",
+        options: ["3", "3.333...", "3.0", "4"],
+        answer: "3.333...",
+      },
+      {
+        id: "3-14",
+        question: "What is printed by this code?\n\nx = 5\n\nx += 2\n\nprint(x)",
+        options: ["7", "5", "2", "Error"],
+        answer: "7",
+      },
+      {
+        id: "3-15",
+        question: "Which of the following is an invalid expression in Python?",
+        options: ["4 < 5 < 6", "10 and 0", "3 <> 2", "5 == 5"],
+        answer: "3 <> 2",
+      },
+    ],
+  },
+  {
+    module: "Module 4 – Input & Output",
+    questions: [
+      {
+        id: "4-1",
+        question: "Which function is used to take input from the user in Python?",
+        options: ["enter()", "scan()", "input()", "read()"],
+        answer: "input()",
+      },
+      {
+        id: "4-2",
+        question: "What is the data type of the value returned by input()?",
+        options: ["int", "float", "str", "depends on user input"],
+        answer: "str",
+      },
+      {
+        id: "4-3",
+        question:
+          'What will this code print if the user types 10?\n\nx = input("Enter a number: ")\n\nprint(x + x)',
+        options: ["20", "1010", "Error", "None"],
+        answer: "1010",
+      },
+      {
+        id: "4-4",
+        question: "How do you convert a user’s input into an integer?",
+        options: ["int(input())", "input(int())", "str(input())", "input().int()"],
+        answer: "int(input())",
+      },
+      {
+        id: "4-5",
+        question:
+          'What happens if the user types text instead of a number when you run this code?\n\nage = int(input("Enter your age: "))',
+        options: [
+          "It prints 0",
+          "It ignores the input",
+          "It raises a ValueError",
+          "It automatically converts it",
+        ],
+        answer: "It raises a ValueError",
+      },
+      {
+        id: "4-6",
+        question: "What is the correct syntax for printing variables using an f-string?",
+        options: [
+          'print("The sum is {x + y}")',
+          'print(f"The sum is {x + y}")',
+          "print(\"f'The sum is {x + y}'\")",
+          'print(f"The sum is x + y")',
+        ],
+        answer: 'print(f"The sum is {x + y}")',
+      },
+      {
+        id: "4-7",
+        question: 'What will this code output?\n\nname = "Riya"\n\nprint(f"Hello, {name}!")',
+        options: ["Hello, name!", "Hello, {name}!", "Hello, Riya!", "Error"],
+        answer: "Hello, Riya!",
+      },
+      {
+        id: "4-8",
+        question: 'Which of the following correctly converts a string "3.14" into a float?',
+        options: ['float("3.14")', 'int("3.14")', 'str("3.14")', 'toFloat("3.14")'],
+        answer: 'float("3.14")',
+      },
+      {
+        id: "4-9",
+        question: "Which of these will result in a TypeError?",
+        options: [
+          'print("The number is", 5)',
+          'print("The number is " + "5")',
+          'print("The number is " + 5)',
+          'print(f"The number is {5}")',
+        ],
+        answer: 'print("The number is " + 5)',
+      },
+      {
+        id: "4-10",
+        question:
+          'What does this code print?\n\nx = input("Enter: ")\n\nprint("You entered:", x)',
+        options: [
+          "Displays user input after the text “You entered:”",
+          "Prints only “Enter:”",
+          "Prints user input only",
+          "Error",
+        ],
+        answer: "Displays user input after the text “You entered:”",
+      },
+      {
+        id: "4-11",
+        question:
+          'What is the output if the user enters 4.5 in the following code?\n\nnum = float(input("Enter a number: "))\n\nprint(num * 2)',
+        options: ["9", '"4.54.5"', "8", "9.0"],
+        answer: "9.0",
+      },
+      {
+        id: "4-12",
+        question: "Which code snippet will safely handle invalid numeric input?",
+        options: [
+          'x = int(input("Enter a number: "))\n\nprint(x)',
+          'try:\n\n    x = int(input("Enter a number: "))\n\nexcept:\n\n    print("Invalid input!")',
+          'x = input(int("Enter a number: "))',
+          'int("Enter a number:")',
+        ],
+        answer:
+          'try:\n\n    x = int(input("Enter a number: "))\n\nexcept:\n\n    print("Invalid input!")',
+      },
+      {
+        id: "4-13",
+        question: "What does print() do by default at the end of every line?",
+        options: [
+          "Adds a comma",
+          "Adds a newline (\\n)",
+          "Adds a space",
+          "Adds nothing",
+        ],
+        answer: "Adds a newline (\\n)",
+      },
+      {
+        id: "4-14",
+        question: "Which parameter in print() allows printing on the same line?",
+        options: ["end", "next", "line", "continue"],
+        answer: "end",
+      },
+      {
+        id: "4-15",
+        question: 'What will this code output?\n\nprint("Hi", end=" ")\n\nprint("there!")',
+        options: ["Hi\nthere!", "Hi there!", "Hi\n \nthere!", "Error"],
+        answer: "Hi there!",
+      },
+    ],
+  },
 ];
