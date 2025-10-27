@@ -11,6 +11,11 @@ import {
   Spacer,
   CardRoot,
   CardBody,
+  Textarea,
+  RadioGroup,
+  Stack,
+  Field,
+  Fieldset,
 } from "@chakra-ui/react";
 import { useColorModeValue } from "../ui/color-mode";
 import {
@@ -19,6 +24,7 @@ import {
   FaRegMeh,
   FaRegSmile,
   FaRegGrinBeam,
+  FaStar,
 } from "react-icons/fa";
 
 const feedbackOptions = [
@@ -30,7 +36,11 @@ const feedbackOptions = [
 ];
 
 export const FeedbackScreen = ({ onFinish }) => {
-  const [selected, setSelected] = useState(null);
+  const [satisfaction, setSatisfaction] = useState(null);
+  const [navigation, setNavigation] = useState(0);
+  const [readable, setReadable] = useState("");
+  const [comments, setComments] = useState("");
+  const [hoveredStar, setHoveredStar] = useState(0);
 
   const cardBg = useColorModeValue("white", "gray.800");
   const headingColor = useColorModeValue("gray.700", "white");
@@ -39,11 +49,13 @@ export const FeedbackScreen = ({ onFinish }) => {
   const selectedBg = useColorModeValue("blue.100", "blue.700");
 
   const handleSubmit = () => {
-    if (selected !== null) {
-      alert(`Thank you for your feedback: ${feedbackOptions[selected].level}`);
+    if (satisfaction !== null) {
+      alert(
+        `Thank you for your feedback!\nSatisfaction: ${feedbackOptions[satisfaction].level}\nNavigation: ${navigation} stars\nReadable: ${readable}\nComments: ${comments}`
+      );
       onFinish();
     } else {
-      alert("Please select a feedback option.");
+      alert("Please select a satisfaction level.");
     }
   };
 
@@ -65,11 +77,11 @@ export const FeedbackScreen = ({ onFinish }) => {
             {feedbackOptions.map((option, index) => (
               <VStack
                 key={index}
-                onClick={() => setSelected(index)}
+                onClick={() => setSatisfaction(index)}
                 cursor="pointer"
                 p={4}
                 borderRadius="lg"
-                bg={selected === index ? selectedBg : "transparent"}
+                bg={satisfaction === index ? selectedBg : "transparent"}
                 transition="background-color 0.2s ease-in-out"
               >
                 <Icon
@@ -77,7 +89,7 @@ export const FeedbackScreen = ({ onFinish }) => {
                   w={20}
                   h={20}
                   color={option.color}
-                  transform={selected === index ? "scale(1.1)" : "scale(1)"}
+                  transform={satisfaction === index ? "scale(1.1)" : "scale(1)"}
                   transition="transform 0.2s ease-in-out"
                 />
                 <Text fontWeight="medium" color={textColor}>
@@ -108,6 +120,72 @@ export const FeedbackScreen = ({ onFinish }) => {
             <Spacer />
             <Text>GOOD</Text>
           </HStack>
+
+          <Fieldset.Root>
+            <Fieldset.Content>
+              <VStack spacing={6} align="stretch" mt={8}>
+                <Field.Root>
+                  <Field.Label fontSize="lg">
+                    How easy was navigation?
+                  </Field.Label>
+                  <HStack>
+                    {[...Array(5)].map((_, index) => {
+                      const starValue = index + 1;
+                      return (
+                        <Icon
+                          as={FaStar}
+                          key={starValue}
+                          boxSize={8}
+                          color={
+                            starValue <= (hoveredStar || navigation)
+                              ? "yellow.400"
+                              : "gray.300"
+                          }
+                          onClick={() => setNavigation(starValue)}
+                          onMouseEnter={() => setHoveredStar(starValue)}
+                          onMouseLeave={() => setHoveredStar(0)}
+                          cursor="pointer"
+                        />
+                      );
+                    })}
+                  </HStack>
+                </Field.Root>
+
+                <Field.Root>
+                  <Field.Label fontSize="lg">Was the text readable?</Field.Label>
+                  <RadioGroup.Root
+                    onValueChange={(details) => setReadable(details.value)}
+                    value={readable}
+                  >
+                    <HStack spacing={4}>
+                      <RadioGroup.Item value="Yes">
+                        <RadioGroup.ItemHiddenInput />
+                        <RadioGroup.ItemIndicator />
+                        <RadioGroup.ItemText>Yes</RadioGroup.ItemText>
+                      </RadioGroup.Item>
+                      <RadioGroup.Item value="No">
+                        <RadioGroup.ItemHiddenInput />
+                        <RadioGroup.ItemIndicator />
+                        <RadioGroup.ItemText>No</RadioGroup.ItemText>
+                      </RadioGroup.Item>
+                    </HStack>
+                  </RadioGroup.Root>
+                </Field.Root>
+
+                <Field.Root>
+                  <Field.Label fontSize="lg">
+                    Any other comments? (Optional)
+                  </Field.Label>
+                  <Textarea
+                    value={comments}
+                    onChange={(e) => setComments(e.target.value)}
+                    placeholder="Keep it short..."
+                  />
+                </Field.Root>
+              </VStack>
+            </Fieldset.Content>
+          </Fieldset.Root>
+
           <Button
             onClick={handleSubmit}
             colorScheme="blue"
