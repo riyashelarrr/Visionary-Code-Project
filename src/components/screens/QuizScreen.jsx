@@ -20,7 +20,7 @@ import certificateBg from "../../assets/certificate.jpg";
 
 const allQuestions = quizData.flatMap((module) => module.questions);
 
-const ResultsScreen = ({ userAnswers, onRestart, userName }) => {
+const ResultsScreen = ({ userAnswers, onRestart, userName, onNext }) => {
   const handleDownloadCertificate = () => {
     const pdf = new jsPDF({
       orientation: "landscape",
@@ -92,6 +92,9 @@ const ResultsScreen = ({ userAnswers, onRestart, userName }) => {
           >
             Download Certificate
           </Button>
+          <Button onClick={onNext} colorScheme="purple" size="lg">
+            Continue
+          </Button>
         </HStack>
 
         <VStack spacing={6} align="stretch" width="100%">
@@ -143,7 +146,7 @@ const ResultsScreen = ({ userAnswers, onRestart, userName }) => {
   );
 };
 
-export const QuizScreen = ({ onNavigateToAccessibility, userName }) => {
+export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState(
     Array(allQuestions.length).fill(null)
@@ -190,6 +193,7 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName }) => {
         userAnswers={userAnswers}
         onRestart={handleRestart}
         userName={userName}
+        onNext={onNext}
       />
     );
   }

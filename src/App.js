@@ -9,6 +9,7 @@ import { QuizScreen } from "./components/screens/QuizScreen";
 import { Flex, Box } from "@chakra-ui/react";
 import { AccessibilityProvider } from "./context/AccessibilityContext";
 import { ThemeManager } from "./context/ThemeManager";
+import { FeedbackScreen } from "./components/screens/FeedbackScreen";
 
 function AppContent() {
   const [screen, setScreen] = useState(1);
@@ -20,6 +21,11 @@ function AppContent() {
       setUserName(name);
     }
     setScreen((prevScreen) => prevScreen + 1);
+  };
+
+  const handleFinish = () => {
+    setScreen(1);
+    setUserName("");
   };
 
   const handleBack = () => {
@@ -45,19 +51,17 @@ function AppContent() {
           <AccessibilitySettingsScreen onNext={handleNext} onBack={handleBack} />
         );
       case 3:
-        return (
-          <CourseScreen
-            onNext={handleNext}
-            onNavigateToAccessibility={navigateToAccessibility}
-          />
-        );
+        return <CourseScreen onNext={handleNext} onBack={handleBack} onNavigateToAccessibility={navigateToAccessibility} />;
       case 4:
         return (
           <QuizScreen
             userName={userName}
             onNavigateToAccessibility={navigateToAccessibility}
+            onNext={handleNext}
           />
         );
+      case 5:
+        return <FeedbackScreen onFinish={handleFinish} />;
       default:
         return <WelcomeScreen onNext={handleNext} />;
     }
