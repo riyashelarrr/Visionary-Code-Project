@@ -71,7 +71,7 @@ export const FeedbackScreen = ({ onFinish }) => {
       <CardBody>
         <VStack spacing={8} align="stretch">
           <Heading as="h1" size="2xl" color={headingColor} textAlign="center">
-            PLEASE GIVE YOUR FEEDBACK
+            Please Provide Your Feedback
           </Heading>
           <HStack justify="space-around" spacing={4} my={8}>
             {feedbackOptions.map((option, index) => (
