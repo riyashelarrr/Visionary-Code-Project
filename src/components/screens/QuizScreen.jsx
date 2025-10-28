@@ -95,6 +95,9 @@ const ResultsScreen = ({ userAnswers, onRestart, userName, onNext, questions }) 
           >
             Download Certificate
           </Button>
+          <Button onClick={onNext} colorScheme="purple" size="lg">
+            Continue
+          </Button>
         </HStack>
 
         <VStack spacing={6} align="stretch" width="100%">
