@@ -11,6 +11,7 @@ import {
   Progress,
   RadioGroup,
   Spacer,
+  GridItem,
 } from "@chakra-ui/react";
 import { FaCheckCircle, FaTimesCircle } from "react-icons/fa";
 import { quizData } from "../../data/quizData";
@@ -162,6 +163,28 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
     setCurrentQuestionIndex(0);
   };
 
+  const handleModuleKeyDown = (e) => {
+    if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+
+    e.preventDefault();
+
+    const currentIndex = quizData.findIndex(
+      (m) => m.module === selectedModule.module
+    );
+
+    let nextIndex;
+    if (e.key === "ArrowDown") {
+      nextIndex =
+        currentIndex === quizData.length - 1
+          ? currentIndex
+          : currentIndex + 1;
+    } else {
+      nextIndex = currentIndex === 0 ? currentIndex : currentIndex - 1;
+    }
+
+    handleModuleSelect(quizData[nextIndex]);
+  };
+
   const handleAnswerSelect = (answer) => {
     const newAnswers = { ...userAnswers };
     newAnswers[selectedModule.module][currentQuestionIndex] = answer;
@@ -225,153 +248,166 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   };
 
   return (
-    <Box
-      p={{ base: 2, md: 8 }}
-      width="100%"
-      maxW="90vw"
-      mx="auto"
-      bg={screenBg}
-      borderRadius="xl"
-    >
-      <VStack spacing={8} align="stretch">
-        <Box p={6} bg={cardBg} borderRadius="lg" boxShadow="2xl">
-          <Heading size="lg" color={headingColor} textAlign="center" mb={4}>
-            Modules
-          </Heading>
-          <HStack spacing={4} justify="center" wrap="wrap">
-            {quizData.map((module) => (
-              <Button
-                key={module.module}
-                onClick={() => handleModuleSelect(module)}
-                colorScheme={
-                  selectedModule.module === module.module ? "blue" : "gray"
-                }
-                variant={
-                  selectedModule.module === module.module ? "solid" : "outline"
-                }
-              >
-                {module.module}
-              </Button>
-            ))}
-          </HStack>
-        </Box>
-
-        {showResults ? (
-          <ResultsScreen
-            userAnswers={userAnswers[selectedModule.module]}
-            onRestart={handleRestart}
-            userName={userName}
-            onNext={onNext}
-            questions={questions}
-          />
-        ) : (
-          <Box p={8} bg={cardBg} borderRadius="lg" boxShadow="2xl">
-            <VStack spacing={8} align="stretch">
-              <Box>
-                <HStack justify="space-between" mb={2}>
-                  <Text fontWeight="bold" color={textColor}>
-                    Question {currentQuestionIndex + 1} of {questions.length}
-                  </Text>
-                  <Text fontWeight="bold" color={textColor}>
-                    {Math.round(progress)}% Complete
-                  </Text>
-                </HStack>
-                <Progress.Root
-                  value={progress}
-                  size="sm"
-                  colorScheme="blue"
-                  bg={progressBg}
-                  borderRadius="md"
-                >
-                  <Progress.Track>
-                    <Progress.Range />
-                  </Progress.Track>
-                </Progress.Root>
-              </Box>
-
-              <Heading
-                as="h2"
-                size="lg"
-                color={headingColor}
-                textAlign="center"
-                minH="120px"
-              >
-                {currentQuestion.question}
+    <Box p={{ base: 2, md: 8 }} width="100%">
+      <Grid
+        templateColumns={{ base: "1fr", lg: "1fr 2.5fr" }}
+        gap={8}
+        width="100%"
+        maxW="1600px"
+        mx="auto"
+      >
+        <GridItem>
+          <Box p={6} bg={cardBg} borderRadius="lg" boxShadow="xl" height="100%">
+            <VStack
+              spacing={4}
+              align="stretch"
+              onKeyDown={handleModuleKeyDown}
+              tabIndex={0}
+              role="listbox"
+              aria-label="Quiz modules"
+            >
+              <Heading size="lg" color={headingColor} mb={4}>
+                Modules
               </Heading>
-
-              <RadioGroup.Root
-                onValueChange={(details) => handleAnswerSelect(details.value)}
-                value={userAnswers[selectedModule.module][currentQuestionIndex]}
-                w="100%"
-              >
-                <Grid
-                  templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
-                  gap={6}
-                  onKeyDown={handleKeyDown}
-                  role="radiogroup"
-                  tabIndex={0}
+              {quizData.map((module) => (
+                <Button
+                  key={module.module}
+                  onClick={() => handleModuleSelect(module)}
+                  colorScheme={
+                    selectedModule.module === module.module ? "blue" : "gray"
+                  }
+                  variant={
+                    selectedModule.module === module.module ? "solid" : "outline"
+                  }
+                  justifyContent="flex-start"
+                  role="option"
+                  aria-selected={selectedModule.module === module.module}
                 >
-                  {currentQuestion.options.map((option) => (
-                    <RadioGroup.Item
-                      key={option}
-                      value={option}
-                      borderWidth="1px"
-                      borderColor={borderColor}
-                      borderRadius="md"
-                      p={8}
-                      textAlign="center"
-                      cursor="pointer"
-                      transition="all 0.2s ease-in-out"
-                      _checked={{
-                        bg: "blue.500",
-                        color: "white",
-                        borderColor: "blue.500",
-                        boxShadow: "md",
-                        transform: "scale(1.02)",
-                      }}
-                      _hover={{
-                        bg: hoverBg,
-                      }}
-                    >
-                      <RadioGroup.ItemHiddenInput />
-                      <Text fontWeight="medium">{option}</Text>
-                    </RadioGroup.Item>
-                  ))}
-                </Grid>
-              </RadioGroup.Root>
-
-              <HStack justify="space-between" mt={8}>
-                <Button onClick={onNavigateToAccessibility} variant="outline">
-                  Accessibility
+                  {module.module}
                 </Button>
-                <Spacer />
-                <HStack>
-                  <Button
-                    onClick={handleBack}
-                    isDisabled={currentQuestionIndex === 0}
-                  >
-                    Back
-                  </Button>
-                  {currentQuestionIndex < questions.length - 1 && (
-                    <Button onClick={handleNext} colorScheme="blue">
-                      Next
-                    </Button>
-                  )}
-                </HStack>
-              </HStack>
-              <Button
-                onClick={handleSubmit}
-                colorScheme="blue"
-                width="full"
-                mt={4}
-                size="lg"
-              >
-                Submit
-              </Button>
+              ))}
             </VStack>
           </Box>
-        )}
-      </VStack>
+        </GridItem>
+
+        <GridItem>
+          {showResults ? (
+            <ResultsScreen
+              userAnswers={userAnswers[selectedModule.module]}
+              onRestart={handleRestart}
+              userName={userName}
+              onNext={onNext}
+              questions={questions}
+            />
+          ) : (
+            <Box p={8} bg={cardBg} borderRadius="lg" boxShadow="2xl">
+              <VStack spacing={8} align="stretch">
+                <Box>
+                  <HStack justify="space-between" mb={2}>
+                    <Text fontWeight="bold" color={textColor}>
+                      Question {currentQuestionIndex + 1} of {questions.length}
+                    </Text>
+                    <Text fontWeight="bold" color={textColor}>
+                      {Math.round(progress)}% Complete
+                    </Text>
+                  </HStack>
+                  <Progress.Root
+                    value={progress}
+                    size="sm"
+                    colorScheme="blue"
+                    bg={progressBg}
+                    borderRadius="md"
+                  >
+                    <Progress.Track>
+                      <Progress.Range />
+                    </Progress.Track>
+                  </Progress.Root>
+                </Box>
+
+                <Heading
+                  as="h2"
+                  size="lg"
+                  color={headingColor}
+                  textAlign="center"
+                  minH="120px"
+                >
+                  {currentQuestion.question}
+                </Heading>
+
+                <RadioGroup.Root
+                  onValueChange={(details) => handleAnswerSelect(details.value)}
+                  value={userAnswers[selectedModule.module][currentQuestionIndex]}
+                  w="100%"
+                >
+                  <Grid
+                    templateColumns={{ base: "1fr", md: "repeat(2, 1fr)" }}
+                    gap={6}
+                    onKeyDown={handleKeyDown}
+                    role="radiogroup"
+                    tabIndex={0}
+                  >
+                    {currentQuestion.options.map((option) => (
+                      <RadioGroup.Item
+                        key={option}
+                        value={option}
+                        borderWidth="1px"
+                        borderColor={borderColor}
+                        borderRadius="md"
+                        p={8}
+                        textAlign="center"
+                        cursor="pointer"
+                        transition="all 0.2s ease-in-out"
+                        _checked={{
+                          bg: "blue.500",
+                          color: "white",
+                          borderColor: "blue.500",
+                          boxShadow: "md",
+                          transform: "scale(1.02)",
+                        }}
+                        _hover={{
+                          bg: hoverBg,
+                        }}
+                      >
+                        <RadioGroup.ItemHiddenInput />
+                        <Text fontWeight="medium">{option}</Text>
+                      </RadioGroup.Item>
+                    ))}
+                  </Grid>
+                </RadioGroup.Root>
+
+                <HStack justify="space-between" mt={8}>
+                  <Button onClick={onNavigateToAccessibility} variant="outline">
+                    Accessibility
+                  </Button>
+                  <Spacer />
+                  <HStack>
+                    <Button
+                      onClick={handleBack}
+                      isDisabled={currentQuestionIndex === 0}
+                    >
+                      Back
+                    </Button>
+                    {currentQuestionIndex < questions.length - 1 && (
+                      <Button onClick={handleNext} colorScheme="blue">
+                        Next
+                      </Button>
+                    )}
+                  </HStack>
+                </HStack>
+                <Button
+                  onClick={handleSubmit}
+                  colorScheme="blue"
+                  width="full"
+                  mt={4}
+                  size="lg"
+                >
+                  Submit
+                </Button>
+              </VStack>
+            </Box>
+          )}
+        </GridItem>
+      </Grid>
     </Box>
   );
 };
