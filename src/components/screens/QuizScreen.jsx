@@ -106,7 +106,8 @@ const ResultsScreen = ({ userAnswers, onRestart, userName, onNext, questions }) 
             Review Your Answers
           </Heading>
           {questions.map((question, index) => {
-            const isCorrect = userAnswers[index] === question.answer;
+            const userAnswer = userAnswers[index];
+            const correctAnswer = question.answer;
             return (
               <Box
                 key={question.id}
@@ -115,7 +116,7 @@ const ResultsScreen = ({ userAnswers, onRestart, userName, onNext, questions }) 
                 borderRadius="lg"
                 boxShadow="md"
                 borderWidth="1px"
-                borderColor={isCorrect ? correctColor : incorrectColor}
+                borderColor={borderColor}
               >
                 <Heading size="md" mb={4} color={headingColor}>
                   {question.question.split("\n").map((line, i) => (
@@ -124,23 +125,48 @@ const ResultsScreen = ({ userAnswers, onRestart, userName, onNext, questions }) 
                     </Text>
                   ))}
                 </Heading>
-                <Text color={textColor} fontWeight="medium">
-                  Your answer:{" "}
-                  <Text as="span" fontWeight="bold">
-                    {userAnswers[index] || "Not answered"}
-                  </Text>
-                </Text>
-                <HStack
-                  mt={2}
-                  color={isCorrect ? correctColor : incorrectColor}
-                >
-                  <Icon as={isCorrect ? FaCheckCircle : FaTimesCircle} />
-                  <Text fontWeight="bold">
-                    {isCorrect
-                      ? "Correct"
-                      : `Correct answer: ${question.answer}`}
-                  </Text>
-                </HStack>
+                <VStack spacing={3} align="stretch" mt={4}>
+                  {question.options.map((option) => {
+                    const isCorrect = option === correctAnswer;
+                    const isSelected = option === userAnswer;
+
+                    let bg = "transparent";
+                    let text = textColor;
+                    if (isCorrect) {
+                      bg = correctColor;
+                      text = "white";
+                    } else if (isSelected) {
+                      bg = incorrectColor;
+                      text = "white";
+                    }
+
+                    return (
+                      <Box
+                        key={option}
+                        bg={bg}
+                        color={text}
+                        p={3}
+                        borderRadius="md"
+                        borderWidth="1px"
+                        borderColor={
+                          isCorrect
+                            ? correctColor
+                            : isSelected
+                            ? incorrectColor
+                            : borderColor
+                        }
+                      >
+                        <HStack justify="space-between">
+                          <Text>{option}</Text>
+                          {isSelected && !isCorrect && (
+                            <Icon as={FaTimesCircle} />
+                          )}
+                          {isCorrect && <Icon as={FaCheckCircle} />}
+                        </HStack>
+                      </Box>
+                    );
+                  })}
+                </VStack>
               </Box>
             );
           })}
@@ -221,6 +247,8 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   const screenBg = useColorModeValue("gray.50", "gray.900");
   const hoverBg = useColorModeValue("blue.100", "blue.700");
   const borderColor = useColorModeValue("gray.200", "gray.600");
+  const correctColor = useColorModeValue("green.500", "green.300");
+  const incorrectColor = useColorModeValue("red.500", "red.300");
 
   const currentQuestion = questions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
@@ -346,32 +374,56 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
                     role="radiogroup"
                     tabIndex={0}
                   >
-                    {currentQuestion.options.map((option) => (
-                      <RadioGroup.Item
-                        key={option}
-                        value={option}
-                        borderWidth="1px"
-                        borderColor={borderColor}
-                        borderRadius="md"
-                        p={8}
-                        textAlign="center"
-                        cursor="pointer"
-                        transition="all 0.2s ease-in-out"
-                        _checked={{
-                          bg: "blue.500",
-                          color: "white",
-                          borderColor: "blue.500",
-                          boxShadow: "md",
-                          transform: "scale(1.02)",
-                        }}
-                        _hover={{
-                          bg: hoverBg,
-                        }}
-                      >
-                        <RadioGroup.ItemHiddenInput />
-                        <Text fontWeight="medium">{option}</Text>
-                      </RadioGroup.Item>
-                    ))}
+                    {currentQuestion.options.map((option) => {
+                      const userAnswer =
+                        userAnswers[selectedModule.module][currentQuestionIndex];
+                      const isSelected = userAnswer === option;
+                      const isCorrect = option === currentQuestion.answer;
+
+                      let bg = "transparent";
+                      let color = "inherit";
+                      let customBorderColor = borderColor;
+                      let transform = "scale(1)";
+                      let boxShadow = "none";
+
+                      if (isSelected) {
+                        transform = "scale(1.02)";
+                        boxShadow = "md";
+                        if (isCorrect) {
+                          bg = correctColor;
+                          color = "white";
+                          customBorderColor = correctColor;
+                        } else {
+                          bg = incorrectColor;
+                          color = "white";
+                          customBorderColor = incorrectColor;
+                        }
+                      }
+
+                      return (
+                        <RadioGroup.Item
+                          key={option}
+                          value={option}
+                          borderWidth="1px"
+                          borderColor={customBorderColor}
+                          borderRadius="md"
+                          p={8}
+                          textAlign="center"
+                          cursor="pointer"
+                          transition="all 0.2s ease-in-out"
+                          bg={bg}
+                          color={color}
+                          transform={transform}
+                          boxShadow={boxShadow}
+                          _hover={{
+                            bg: isSelected ? bg : hoverBg,
+                          }}
+                        >
+                          <RadioGroup.ItemHiddenInput />
+                          <Text fontWeight="medium">{option}</Text>
+                        </RadioGroup.Item>
+                      );
+                    })}
                   </Grid>
                 </RadioGroup.Root>
 
