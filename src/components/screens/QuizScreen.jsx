@@ -20,6 +20,7 @@ import jsPDF from "jspdf";
 import certificateBg from "../../assets/certificate.jpg";
 import correctSound from "../../assets/sounds/correct.mp3";
 import wrongSound from "../../assets/sounds/wrong.mp3";
+import navigationSound from "../../assets/sounds/navigation.mp3";
 
 const initialAnswers = quizData.reduce((acc, module) => {
   acc[module.module] = Array(module.questions.length).fill(null);
@@ -230,12 +231,14 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   };
 
   const handleNext = () => {
+    playSound(navigationSound);
     setCurrentQuestionIndex((prev) =>
       Math.min(prev + 1, questions.length - 1)
     );
   };
 
   const handleBack = () => {
+    playSound(navigationSound);
     setCurrentQuestionIndex((prev) => Math.max(prev - 1, 0));
   };
 

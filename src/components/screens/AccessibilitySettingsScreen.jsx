@@ -16,6 +16,8 @@ import {
 } from "@chakra-ui/react";
 import { useColorModeValue } from "../ui/color-mode";
 import { useAccessibility } from "../../context/AccessibilityContext";
+import enabledSound from "../../assets/sounds/enabled.mp3";
+import disabledSound from "../../assets/sounds/disabled.mp3";
 
 export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
   const {
@@ -26,6 +28,10 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
     visualOutline,
     setVisualOutline,
   } = useAccessibility();
+
+  const playSound = (sound) => {
+    new Audio(sound).play();
+  };
 
   const slider = useSlider({
     min: 12,
@@ -123,7 +129,14 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
           </Text>
           <Switch.Root
             checked={visualOutline}
-            onCheckedChange={(details) => setVisualOutline(details.checked)}
+            onCheckedChange={(details) => {
+              if (details.checked) {
+                playSound(enabledSound);
+              } else {
+                playSound(disabledSound);
+              }
+              setVisualOutline(details.checked);
+            }}
           >
             <Switch.HiddenInput />
             <Switch.Control>
