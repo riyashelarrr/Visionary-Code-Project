@@ -18,6 +18,8 @@ import { quizData } from "../../data/quizData";
 import { useColorModeValue } from "../ui/color-mode";
 import jsPDF from "jspdf";
 import certificateBg from "../../assets/certificate.jpg";
+import correctSound from "../../assets/sounds/correct.mp3";
+import wrongSound from "../../assets/sounds/wrong.mp3";
 
 const initialAnswers = quizData.reduce((acc, module) => {
   acc[module.module] = Array(module.questions.length).fill(null);
@@ -184,6 +186,10 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showResults, setShowResults] = useState(false);
 
+  const playSound = (sound) => {
+    new Audio(sound).play();
+  };
+
   const handleModuleSelect = (module) => {
     setSelectedModule(module);
     setCurrentQuestionIndex(0);
@@ -215,6 +221,12 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
     const newAnswers = { ...userAnswers };
     newAnswers[selectedModule.module][currentQuestionIndex] = answer;
     setUserAnswers(newAnswers);
+
+    if (answer === questions[currentQuestionIndex].answer) {
+      playSound(correctSound);
+    } else {
+      playSound(wrongSound);
+    }
   };
 
   const handleNext = () => {
