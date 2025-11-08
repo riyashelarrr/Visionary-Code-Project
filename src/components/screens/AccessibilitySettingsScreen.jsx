@@ -18,6 +18,7 @@ import { useColorModeValue } from "../ui/color-mode";
 import { useAccessibility } from "../../context/AccessibilityContext";
 import enabledSound from "../../assets/sounds/enabled.mp3";
 import disabledSound from "../../assets/sounds/disabled.mp3";
+import navigationSound from "../../assets/sounds/navigation.mp3";
 
 export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
   const {
@@ -31,6 +32,16 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
 
   const playSound = (sound) => {
     new Audio(sound).play();
+  };
+
+  const handleNext = () => {
+    playSound(navigationSound);
+    onNext();
+  };
+
+  const handleBack = () => {
+    playSound(navigationSound);
+    onBack();
   };
 
   const slider = useSlider({
@@ -147,10 +158,10 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
         </VStack>
 
         <HStack mt={8}>
-          <Button colorScheme="gray" size="lg" onClick={onBack}>
+          <Button colorScheme="gray" size="lg" onClick={handleBack}>
             Back
           </Button>
-          <Button colorScheme="blue" size="lg" onClick={onNext}>
+          <Button colorScheme="blue" size="lg" onClick={handleNext}>
             Start Learning
           </Button>
         </HStack>

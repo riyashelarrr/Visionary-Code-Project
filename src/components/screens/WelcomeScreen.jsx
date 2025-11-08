@@ -16,12 +16,18 @@ import {
 import { useState } from "react";
 import { FaUser, FaUniversalAccess } from "react-icons/fa";
 import { useColorModeValue } from "../ui/color-mode";
+import navigationSound from "../../assets/sounds/navigation.mp3";
 
 export const WelcomeScreen = ({ onNext }) => {
   const [name, setName] = useState("");
 
+  const playSound = (sound) => {
+    new Audio(sound).play();
+  };
+
   const handleNext = () => {
     if (name.trim()) {
+      playSound(navigationSound);
       onNext(name);
     } else {
       alert("Please enter your name to proceed.");

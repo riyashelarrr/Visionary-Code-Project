@@ -10,11 +10,16 @@ import { Flex, Box } from "@chakra-ui/react";
 import { AccessibilityProvider } from "./context/AccessibilityContext";
 import { ThemeManager } from "./context/ThemeManager";
 import { FeedbackScreen } from "./components/screens/FeedbackScreen";
+import navigationSound from "./assets/sounds/navigation.mp3";
 
 function AppContent() {
   const [screen, setScreen] = useState(1);
   const [previousScreen, setPreviousScreen] = useState(null);
   const [userName, setUserName] = useState("");
+
+  const playSound = (sound) => {
+    new Audio(sound).play();
+  };
 
   const handleNext = (name) => {
     if (typeof name === "string" && name) {
@@ -29,6 +34,7 @@ function AppContent() {
   };
 
   const handleBack = () => {
+    playSound(navigationSound);
     if (previousScreen) {
       setScreen(previousScreen);
       setPreviousScreen(null);

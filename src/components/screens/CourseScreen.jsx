@@ -13,6 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useColorModeValue } from "../ui/color-mode";
 import { FaPlayCircle } from "react-icons/fa";
+import navigationSound from "../../assets/sounds/navigation.mp3";
 
 const courseVideos = [
   {
@@ -119,6 +120,10 @@ export const CourseScreen = ({ onNext, onNavigateToAccessibility }) => {
     setSelectedVideo(video);
   };
 
+  const playSound = (sound) => {
+    new Audio(sound).play();
+  };
+
   const handleKeyDown = (e) => {
     if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
     e.preventDefault();
@@ -135,6 +140,11 @@ export const CourseScreen = ({ onNext, onNavigateToAccessibility }) => {
       nextIndex = currentIndex === 0 ? currentIndex : currentIndex - 1;
     }
     setSelectedVideo(courseVideos[nextIndex]);
+  };
+
+  const handleNext = () => {
+    playSound(navigationSound);
+    onNext();
   };
 
   const cardBg = useColorModeValue("white", "gray.800");
@@ -211,7 +221,7 @@ export const CourseScreen = ({ onNext, onNavigateToAccessibility }) => {
               >
                 Accessibility
               </Button>
-              <Button onClick={onNext} colorScheme="blue" size="lg">
+              <Button onClick={handleNext} colorScheme="blue" size="lg">
                 Next
               </Button>
             </HStack>
