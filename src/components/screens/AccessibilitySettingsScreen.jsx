@@ -30,8 +30,12 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
     setVisualOutline,
   } = useAccessibility();
 
+  const { soundEnabled, setSoundEnabled } = useAccessibility();
+
   const playSound = (sound) => {
-    new Audio(sound).play();
+    if (soundEnabled) {
+      new Audio(sound).play();
+    }
   };
 
   const handleNext = () => {
@@ -154,6 +158,28 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
               <Switch.Thumb />
             </Switch.Control>
             <Switch.Label>Activate Visual Outline</Switch.Label>
+          </Switch.Root>
+
+          <Text mt={6}>
+            Enable or disable all application sounds.
+          </Text>
+          <Switch.Root
+            checked={soundEnabled}
+            onCheckedChange={(details) => {
+              // Always play sound for this control, even if sounds are being disabled
+              if (details.checked) {
+                new Audio(enabledSound).play();
+              } else {
+                new Audio(disabledSound).play();
+              }
+              setSoundEnabled(details.checked);
+            }}
+          >
+            <Switch.HiddenInput />
+            <Switch.Control>
+              <Switch.Thumb />
+            </Switch.Control>
+            <Switch.Label>Enable Application Sounds</Switch.Label>
           </Switch.Root>
         </VStack>
 

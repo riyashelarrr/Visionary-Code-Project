@@ -17,12 +17,16 @@ import { useState } from "react";
 import { FaUser, FaUniversalAccess } from "react-icons/fa";
 import { useColorModeValue } from "../ui/color-mode";
 import navigationSound from "../../assets/sounds/navigation.mp3";
+import { useAccessibility } from "../../context/AccessibilityContext";
 
 export const WelcomeScreen = ({ onNext }) => {
   const [name, setName] = useState("");
+  const { soundEnabled } = useAccessibility();
 
   const playSound = (sound) => {
-    new Audio(sound).play();
+    if (soundEnabled) {
+      new Audio(sound).play();
+    }
   };
 
   const handleNext = () => {

@@ -18,6 +18,7 @@ export const AccessibilityProvider = ({ children }) => {
   const [fontSize, setFontSize] = useState(() => getInitialState('fontSize', 16));
   const [theme, setTheme] = useState(() => getInitialState('theme', 'light'));
   const [visualOutline, setVisualOutline] = useState(() => getInitialState('visualOutline', false));
+  const [soundEnabled, setSoundEnabled] = useState(() => getInitialState('soundEnabled', true));
 
   const updateStateAndStorage = (setter, key) => (newValue) => {
     try {
@@ -35,6 +36,8 @@ export const AccessibilityProvider = ({ children }) => {
     setTheme: updateStateAndStorage(setTheme, 'theme'),
     visualOutline,
     setVisualOutline: updateStateAndStorage(setVisualOutline, 'visualOutline'),
+    soundEnabled,
+    setSoundEnabled: updateStateAndStorage(setSoundEnabled, 'soundEnabled'),
   };
 
   return (

@@ -14,6 +14,7 @@ import {
 import { useColorModeValue } from "../ui/color-mode";
 import { FaPlayCircle } from "react-icons/fa";
 import navigationSound from "../../assets/sounds/navigation.mp3";
+import { useAccessibility } from "../../context/AccessibilityContext";
 
 const courseVideos = [
   {
@@ -115,13 +116,16 @@ const VideoListItem = ({ video, isSelected, onSelect }) => {
 
 export const CourseScreen = ({ onNext, onNavigateToAccessibility }) => {
   const [selectedVideo, setSelectedVideo] = useState(courseVideos[0]);
+  const { soundEnabled } = useAccessibility();
 
   const handleVideoSelect = (video) => {
     setSelectedVideo(video);
   };
 
   const playSound = (sound) => {
-    new Audio(sound).play();
+    if (soundEnabled) {
+      new Audio(sound).play();
+    }
   };
 
   const handleKeyDown = (e) => {

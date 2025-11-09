@@ -11,14 +11,18 @@ import { AccessibilityProvider } from "./context/AccessibilityContext";
 import { ThemeManager } from "./context/ThemeManager";
 import { FeedbackScreen } from "./components/screens/FeedbackScreen";
 import navigationSound from "./assets/sounds/navigation.mp3";
+import { useAccessibility } from "./context/AccessibilityContext";
 
 function AppContent() {
   const [screen, setScreen] = useState(1);
   const [previousScreen, setPreviousScreen] = useState(null);
   const [userName, setUserName] = useState("");
+  const { soundEnabled } = useAccessibility();
 
   const playSound = (sound) => {
-    new Audio(sound).play();
+    if (soundEnabled) {
+      new Audio(sound).play();
+    }
   };
 
   const handleNext = (name) => {
@@ -44,6 +48,7 @@ function AppContent() {
   };
 
   const navigateToAccessibility = () => {
+    playSound(navigationSound);
     setPreviousScreen(screen);
     setScreen(2);
   };

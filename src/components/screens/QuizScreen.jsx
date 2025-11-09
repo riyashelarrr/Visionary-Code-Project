@@ -21,6 +21,7 @@ import certificateBg from "../../assets/certificate.jpg";
 import correctSound from "../../assets/sounds/correct.mp3";
 import wrongSound from "../../assets/sounds/wrong.mp3";
 import navigationSound from "../../assets/sounds/navigation.mp3";
+import { useAccessibility } from "../../context/AccessibilityContext";
 
 const initialAnswers = quizData.reduce((acc, module) => {
   acc[module.module] = Array(module.questions.length).fill(null);
@@ -183,12 +184,15 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   const [selectedModule, setSelectedModule] = useState(quizData[0]);
   const questions = useMemo(() => selectedModule.questions, [selectedModule]);
   const [userAnswers, setUserAnswers] = useState(initialAnswers);
+  const { soundEnabled } = useAccessibility();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showResults, setShowResults] = useState(false);
 
   const playSound = (sound) => {
-    new Audio(sound).play();
+    if (soundEnabled) {
+      new Audio(sound).play();
+    }
   };
 
   const handleModuleSelect = (module) => {
