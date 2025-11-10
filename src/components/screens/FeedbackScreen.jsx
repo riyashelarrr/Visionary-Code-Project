@@ -26,6 +26,8 @@ import {
   FaRegGrinBeam,
   FaStar,
 } from "react-icons/fa";
+import { useAccessibility } from "../../context/AccessibilityContext";
+import navigationSound from "../../assets/sounds/navigation.mp3";
 
 const feedbackOptions = [
   { level: "Bad", icon: FaRegAngry, color: "red.500" },
@@ -35,12 +37,51 @@ const feedbackOptions = [
   { level: "Excellent", icon: FaRegGrinBeam, color: "green.500" },
 ];
 
+const StarRatingInput = ({ label, value, onValueChange, hoveredValue, onHoveredValueChange }) => (
+  <Field.Root>
+    <Field.Label fontSize="lg">{label}</Field.Label>
+    <HStack>
+      {[...Array(5)].map((_, index) => {
+        const starValue = index + 1;
+        return (
+          <Icon
+            as={FaStar}
+            key={starValue}
+            boxSize={8}
+            color={
+              starValue <= (hoveredValue || value)
+                ? "yellow.400"
+                : "gray.300"
+            }
+            onClick={() => onValueChange(starValue)}
+            onMouseEnter={() => onHoveredValueChange(starValue)}
+            onMouseLeave={() => onHoveredValueChange(0)}
+            cursor="pointer"
+          />
+        );
+      })}
+    </HStack>
+  </Field.Root>
+);
+
+
 export const FeedbackScreen = ({ onFinish }) => {
   const [satisfaction, setSatisfaction] = useState(null);
-  const [navigation, setNavigation] = useState(0);
-  const [readable, setReadable] = useState("");
-  const [comments, setComments] = useState("");
-  const [hoveredStar, setHoveredStar] = useState(0);
+  const [clarity, setClarity] = useState(0);
+  const [hoveredClarity, setHoveredClarity] = useState(0);
+  const [responsiveness, setResponsiveness] = useState(0);
+  const [hoveredResponsiveness, setHoveredResponsiveness] = useState(0);
+  const [screenReader, setScreenReader] = useState(0);
+  const [hoveredScreenReader, setHoveredScreenReader] = useState(0);
+  const [contrast, setContrast] = useState("");
+  const [audioFeedback, setAudioFeedback] = useState(0);
+  const [hoveredAudioFeedback, setHoveredAudioFeedback] = useState(0);
+  const [overallAccessibility, setOverallAccessibility] = useState(0);
+  const [hoveredOverallAccessibility, setHoveredOverallAccessibility] = useState(0);
+  const [improvements, setImprovements] = useState("");
+  const [likes, setLikes] = useState("");
+
+  const { soundEnabled } = useAccessibility();
 
   const cardBg = useColorModeValue("white", "gray.800");
   const headingColor = useColorModeValue("gray.700", "white");
@@ -48,10 +89,17 @@ export const FeedbackScreen = ({ onFinish }) => {
   const screenBg = useColorModeValue("gray.50", "gray.900");
   const selectedBg = useColorModeValue("blue.100", "blue.700");
 
+  const playSound = (sound) => {
+    if (soundEnabled) {
+      new Audio(sound).play();
+    }
+  };
+
   const handleSubmit = () => {
     if (satisfaction !== null) {
+      playSound(navigationSound);
       alert(
-        `Thank you for your feedback!\nSatisfaction: ${feedbackOptions[satisfaction].level}\nNavigation: ${navigation} stars\nReadable: ${readable}\nComments: ${comments}`
+        `Thank you for your feedback!`
       );
       onFinish();
     } else {
@@ -124,38 +172,32 @@ export const FeedbackScreen = ({ onFinish }) => {
           <Fieldset.Root>
             <Fieldset.Content>
               <VStack spacing={6} align="stretch" mt={8}>
+                <StarRatingInput
+                  label="Clarity of instructions (were buttons and features easy to understand?)"
+                  value={clarity}
+                  onValueChange={setClarity}
+                  hoveredValue={hoveredClarity}
+                  onHoveredValueChange={setHoveredClarity}
+                />
+                <StarRatingInput
+                  label="Did the app respond quickly to your actions?"
+                  value={responsiveness}
+                  onValueChange={setResponsiveness}
+                  hoveredValue={hoveredResponsiveness}
+                  onHoveredValueChange={setHoveredResponsiveness}
+                />
+                <StarRatingInput
+                  label="Screen reader compatibility"
+                  value={screenReader}
+                  onValueChange={setScreenReader}
+                  hoveredValue={hoveredScreenReader}
+                  onHoveredValueChange={setHoveredScreenReader}
+                />
                 <Field.Root>
-                  <Field.Label fontSize="lg">
-                    How easy was navigation?
-                  </Field.Label>
-                  <HStack>
-                    {[...Array(5)].map((_, index) => {
-                      const starValue = index + 1;
-                      return (
-                        <Icon
-                          as={FaStar}
-                          key={starValue}
-                          boxSize={8}
-                          color={
-                            starValue <= (hoveredStar || navigation)
-                              ? "yellow.400"
-                              : "gray.300"
-                          }
-                          onClick={() => setNavigation(starValue)}
-                          onMouseEnter={() => setHoveredStar(starValue)}
-                          onMouseLeave={() => setHoveredStar(0)}
-                          cursor="pointer"
-                        />
-                      );
-                    })}
-                  </HStack>
-                </Field.Root>
-
-                <Field.Root>
-                  <Field.Label fontSize="lg">Was the text readable?</Field.Label>
+                  <Field.Label fontSize="lg">Was the text and background contrast comfortable to read?</Field.Label>
                   <RadioGroup.Root
-                    onValueChange={(details) => setReadable(details.value)}
-                    value={readable}
+                    onValueChange={(details) => setContrast(details.value)}
+                    value={contrast}
                   >
                     <HStack spacing={4}>
                       <RadioGroup.Item value="Yes">
@@ -171,15 +213,38 @@ export const FeedbackScreen = ({ onFinish }) => {
                     </HStack>
                   </RadioGroup.Root>
                 </Field.Root>
-
+                <StarRatingInput
+                  label="Was the audio feedback clear and useful?"
+                  value={audioFeedback}
+                  onValueChange={setAudioFeedback}
+                  hoveredValue={hoveredAudioFeedback}
+                  onHoveredValueChange={setHoveredAudioFeedback}
+                />
+                <StarRatingInput
+                  label="Overall, was this app extremely accessible?"
+                  value={overallAccessibility}
+                  onValueChange={setOverallAccessibility}
+                  hoveredValue={hoveredOverallAccessibility}
+                  onHoveredValueChange={setHoveredOverallAccessibility}
+                />
                 <Field.Root>
                   <Field.Label fontSize="lg">
-                    Any other comments? (Optional)
+                    If not, what can be improved?
                   </Field.Label>
                   <Textarea
-                    value={comments}
-                    onChange={(e) => setComments(e.target.value)}
-                    placeholder="Keep it short..."
+                    value={improvements}
+                    onChange={(e) => setImprovements(e.target.value)}
+                    placeholder="Your suggestions..."
+                  />
+                </Field.Root>
+                <Field.Root>
+                  <Field.Label fontSize="lg">
+                    What did you like/find accessible through using this app that compares best with other accessible tools you've used?
+                  </Field.Label>
+                  <Textarea
+                    value={likes}
+                    onChange={(e) => setLikes(e.target.value)}
+                    placeholder="Your thoughts..."
                   />
                 </Field.Root>
               </VStack>
