@@ -1,27 +1,46 @@
 import {
   Box,
   Heading,
-  Text,
+  Input,
   Button,
   VStack,
-  Input,
+  Text,
   Icon,
   HStack,
+  IconButton,
   Separator,
   CardRoot,
   CardBody,
   FieldRoot,
   FieldLabel,
 } from "@chakra-ui/react";
-import { useState } from "react";
-import { FaUser, FaUniversalAccess } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import {
+  FaUser,
+  FaUniversalAccess,
+  FaMicrophone,
+  FaMicrophoneSlash,
+} from "react-icons/fa";
 import { useColorModeValue } from "../ui/color-mode";
 import navigationSound from "../../assets/sounds/navigation.mp3";
 import { useAccessibility } from "../../context/AccessibilityContext";
+import useSpeechRecognition from "../../hooks/useSpeechRecognition";
 
 export const WelcomeScreen = ({ onNext }) => {
   const [name, setName] = useState("");
   const { soundEnabled } = useAccessibility();
+
+  const {
+    isListening,
+    transcript,
+    startListening,
+    stopListening,
+    hasRecognitionSupport,
+  } = useSpeechRecognition();
+
+  useEffect(() => {
+    setName(transcript);
+  }, [transcript]);
 
   const playSound = (sound) => {
     if (soundEnabled) {
@@ -38,13 +57,21 @@ export const WelcomeScreen = ({ onNext }) => {
     }
   };
 
+  const handleMicClick = () => {
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
+
   return (
     <CardRoot
       boxShadow="xl"
       borderRadius="lg"
       p={8}
       width="100%"
-      maxW="800px"
+      maxWidth="md"
       bg={useColorModeValue("white", "gray.700")}
     >
       <CardBody>
@@ -63,13 +90,29 @@ export const WelcomeScreen = ({ onNext }) => {
           <VStack spacing={4} width="100%">
             <FieldRoot id="name">
               <FieldLabel>Name</FieldLabel>
-              <Input
-                type="text"
-                placeholder="Enter your name"
-                size="lg"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+              <HStack width="100%">
+                <Input
+                  type="text"
+                  placeholder="Enter your name"
+                  size="lg"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+                {hasRecognitionSupport && (
+                  <IconButton
+                    aria-label={
+                      isListening ? "Stop listening" : "Start listening"
+                    }
+                    
+                    onClick={handleMicClick}
+                    isRound
+                    size="lg"
+                    colorScheme="blue"
+                  >
+                    {isListening ? <FaMicrophoneSlash /> : <FaMicrophone />}
+                  </IconButton>
+                )}
+              </HStack>
             </FieldRoot>
           </VStack>
           <Button
