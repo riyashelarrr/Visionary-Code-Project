@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Heading,
@@ -16,6 +16,7 @@ import {
   Stack,
   Field,
   Fieldset,
+  IconButton,
 } from "@chakra-ui/react";
 import { useColorModeValue } from "../ui/color-mode";
 import {
@@ -25,9 +26,12 @@ import {
   FaRegSmile,
   FaRegGrinBeam,
   FaStar,
+  FaMicrophone,
+  FaMicrophoneSlash,
 } from "react-icons/fa";
 import { useAccessibility } from "../../context/AccessibilityContext";
 import navigationSound from "../../assets/sounds/navigation.mp3";
+import useSpeechRecognition from "../../hooks/useSpeechRecognition";
 
 const feedbackOptions = [
   { level: "Bad", icon: FaRegAngry, color: "red.500" },
@@ -80,8 +84,27 @@ export const FeedbackScreen = ({ onFinish }) => {
   const [hoveredOverallAccessibility, setHoveredOverallAccessibility] = useState(0);
   const [improvements, setImprovements] = useState("");
   const [likes, setLikes] = useState("");
+  const [activeMic, setActiveMic] = useState(null);
 
   const { soundEnabled } = useAccessibility();
+
+  const {
+    isListening,
+    transcript,
+    startListening,
+    stopListening,
+    hasRecognitionSupport,
+  } = useSpeechRecognition();
+
+  useEffect(() => {
+    if (transcript && activeMic === 'improvements') {
+      setImprovements(transcript);
+    }
+    if (transcript && activeMic === 'likes') {
+      setLikes(transcript);
+    }
+  }, [transcript, activeMic]);
+
 
   const cardBg = useColorModeValue("white", "gray.800");
   const headingColor = useColorModeValue("gray.700", "white");
@@ -92,6 +115,26 @@ export const FeedbackScreen = ({ onFinish }) => {
   const playSound = (sound) => {
     if (soundEnabled) {
       new Audio(sound).play();
+    }
+  };
+
+  const handleImprovementsMicClick = () => {
+    if (isListening && activeMic === 'improvements') {
+      stopListening();
+      setActiveMic(null);
+    } else {
+      setActiveMic('improvements');
+      startListening();
+    }
+  };
+
+  const handleLikesMicClick = () => {
+    if (isListening && activeMic === 'likes') {
+      stopListening();
+      setActiveMic(null);
+    } else {
+      setActiveMic('likes');
+      startListening();
     }
   };
 
@@ -231,21 +274,47 @@ export const FeedbackScreen = ({ onFinish }) => {
                   <Field.Label fontSize="lg">
                     If not, what can be improved?
                   </Field.Label>
+                  <HStack width="100%">
                   <Textarea
                     value={improvements}
                     onChange={(e) => setImprovements(e.target.value)}
                     placeholder="Your suggestions..."
                   />
+                  {hasRecognitionSupport && (
+                    <IconButton
+                      aria-label={isListening && activeMic === 'improvements' ? "Stop listening" : "Start listening for improvements"}
+                      onClick={handleImprovementsMicClick}
+                      isRound
+                      size="lg"
+                      colorScheme="blue"
+                    >
+                      {isListening && activeMic === 'improvements' ? <FaMicrophoneSlash /> : <FaMicrophone />}
+                    </IconButton>
+                  )}
+                  </HStack>
                 </Field.Root>
                 <Field.Root>
                   <Field.Label fontSize="lg">
                     What did you like/find accessible through using this app that compares best with other accessible tools you've used?
                   </Field.Label>
+                  <HStack width="100%">
                   <Textarea
                     value={likes}
                     onChange={(e) => setLikes(e.target.value)}
                     placeholder="Your thoughts..."
                   />
+                   {hasRecognitionSupport && (
+                    <IconButton
+                      aria-label={isListening && activeMic === 'likes' ? "Stop listening" : "Start listening for likes"}
+                      onClick={handleLikesMicClick}
+                      isRound
+                      size="lg"
+                      colorScheme="blue"
+                    >
+                      {isListening && activeMic === 'likes' ? <FaMicrophoneSlash /> : <FaMicrophone />}
+                    </IconButton>
+                  )}
+                  </HStack>
                 </Field.Root>
               </VStack>
             </Fieldset.Content>
