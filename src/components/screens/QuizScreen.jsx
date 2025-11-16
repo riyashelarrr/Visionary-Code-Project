@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import {
   Box,
   Heading,
@@ -185,6 +185,9 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   const questions = useMemo(() => selectedModule.questions, [selectedModule]);
   const [userAnswers, setUserAnswers] = useState(initialAnswers);
   const { soundEnabled } = useAccessibility();
+  const optionsContainerRef = useRef(null);
+  const submitButtonRef = useRef(null);
+  const moduleListRef = useRef(null);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showResults, setShowResults] = useState(false);
@@ -201,6 +204,13 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   };
 
   const handleModuleKeyDown = (e) => {
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      if (optionsContainerRef.current) {
+        optionsContainerRef.current.focus();
+      }
+      return;
+    }
     if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
 
     e.preventDefault();
@@ -239,6 +249,11 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
     setCurrentQuestionIndex((prev) =>
       Math.min(prev + 1, questions.length - 1)
     );
+    setTimeout(() => {
+      if (optionsContainerRef.current) {
+        optionsContainerRef.current.focus();
+      }
+    }, 0);
   };
 
   const handleBack = () => {
@@ -280,6 +295,14 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
 
     let nextIndex;
 
+    if (e.key === "ArrowLeft" && e.shiftKey) {
+      e.preventDefault();
+      if (moduleListRef.current) {
+        moduleListRef.current.focus();
+      }
+      return;
+    }
+
     if (e.key === "ArrowRight" || e.key === "ArrowDown") {
       e.preventDefault();
       nextIndex = currentIndex === -1 ? 0 : (currentIndex + 1) % options.length;
@@ -291,6 +314,17 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
           ? options.length - 1
           : (currentIndex - 1) % options.length;
       handleAnswerSelect(options[nextIndex]);
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (userAnswers[selectedModule.module][currentQuestionIndex] !== null) {
+        if (currentQuestionIndex < questions.length - 1) {
+          handleNext();
+        } else {
+          if (submitButtonRef.current) {
+            submitButtonRef.current.focus();
+          }
+        }
+      }
     }
   };
 
@@ -312,6 +346,7 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
               tabIndex={0}
               role="listbox"
               aria-label="Quiz modules"
+              ref={moduleListRef}
             >
               <Heading size="lg" color={headingColor} mb={4}>
                 Modules
@@ -392,6 +427,9 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
                     onKeyDown={handleKeyDown}
                     role="radiogroup"
                     tabIndex={0}
+                    ref={optionsContainerRef}
+                    key={currentQuestion.id}
+                    autoFocus
                   >
                     {currentQuestion.options.map((option) => {
                       const userAnswer =
@@ -471,6 +509,7 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
                   width="full"
                   mt={4}
                   size="lg"
+                  ref={submitButtonRef}
                 >
                   Submit
                 </Button>
