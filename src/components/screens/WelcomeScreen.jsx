@@ -14,7 +14,7 @@ import {
   FieldRoot,
   FieldLabel,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   FaUser,
   FaUniversalAccess,
@@ -29,6 +29,7 @@ import useSpeechRecognition from "../../hooks/useSpeechRecognition";
 export const WelcomeScreen = ({ onNext }) => {
   const [name, setName] = useState("");
   const { soundEnabled } = useAccessibility();
+  const nameInputRef = useRef(null);
 
   const {
     isListening,
@@ -41,6 +42,10 @@ export const WelcomeScreen = ({ onNext }) => {
   useEffect(() => {
     setName(transcript);
   }, [transcript]);
+
+  useEffect(() => {
+    nameInputRef.current?.focus();
+  }, []);
 
   const playSound = (sound) => {
     if (soundEnabled) {
@@ -92,6 +97,7 @@ export const WelcomeScreen = ({ onNext }) => {
               <FieldLabel>Name</FieldLabel>
               <HStack width="100%">
                 <Input
+                  ref={nameInputRef}
                   type="text"
                   placeholder="Enter your name"
                   size="lg"

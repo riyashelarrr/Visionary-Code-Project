@@ -188,6 +188,7 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   const optionsContainerRef = useRef(null);
   const submitButtonRef = useRef(null);
   const moduleListRef = useRef(null);
+  const questionHeadingRef = useRef(null);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showResults, setShowResults] = useState(false);
@@ -206,8 +207,8 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   const handleModuleKeyDown = (e) => {
     if (e.key === "ArrowRight") {
       e.preventDefault();
-      if (optionsContainerRef.current) {
-        optionsContainerRef.current.focus();
+      if (questionHeadingRef.current) {
+        questionHeadingRef.current.focus();
       }
       return;
     }
@@ -250,8 +251,8 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
       Math.min(prev + 1, questions.length - 1)
     );
     setTimeout(() => {
-      if (optionsContainerRef.current) {
-        optionsContainerRef.current.focus();
+      if (questionHeadingRef.current) {
+        questionHeadingRef.current.focus();
       }
     }, 0);
   };
@@ -297,8 +298,8 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
 
     if (e.key === "ArrowLeft" && e.shiftKey) {
       e.preventDefault();
-      if (moduleListRef.current) {
-        moduleListRef.current.focus();
+      if (questionHeadingRef.current) {
+        questionHeadingRef.current.focus();
       }
       return;
     }
@@ -412,6 +413,19 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
                   color={headingColor}
                   textAlign="center"
                   minH="120px"
+                  ref={questionHeadingRef}
+                  tabIndex={-1}
+                  aria-live="polite"
+                  onKeyDown={(e) => {
+                    if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      optionsContainerRef.current?.focus();
+                    }
+                    if (e.key === "ArrowLeft" && e.shiftKey) {
+                      e.preventDefault();
+                      moduleListRef.current?.focus();
+                    }
+                  }}
                 >
                   {currentQuestion.question}
                 </Heading>
