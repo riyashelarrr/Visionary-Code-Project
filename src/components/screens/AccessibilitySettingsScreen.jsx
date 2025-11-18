@@ -152,6 +152,11 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
               }
               setVisualOutline(details.checked);
             }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setVisualOutline(!visualOutline);
+              }
+            }}
           >
             <Switch.HiddenInput />
             <Switch.Control>
@@ -173,6 +178,11 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
                 new Audio(disabledSound).play();
               }
               setSoundEnabled(details.checked);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                setSoundEnabled(!soundEnabled);
+              }
             }}
           >
             <Switch.HiddenInput />
