@@ -192,6 +192,7 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showResults, setShowResults] = useState(false);
+  const [answerStatus, setAnswerStatus] = useState(null); // null, 'correct', or 'incorrect'
 
   const playSound = (sound) => {
     if (soundEnabled) {
@@ -237,12 +238,6 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
     const newAnswers = { ...userAnswers };
     newAnswers[selectedModule.module][currentQuestionIndex] = answer;
     setUserAnswers(newAnswers);
-
-    if (answer === questions[currentQuestionIndex].answer) {
-      playSound(correctSound);
-    } else {
-      playSound(wrongSound);
-    }
   };
 
   const handleNext = () => {
@@ -263,6 +258,7 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   };
 
   const handleSubmit = () => {
+    playSound(navigationSound);
     setShowResults(true);
   };
 
@@ -284,6 +280,7 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   const borderColor = useColorModeValue("gray.200", "gray.600");
   const correctColor = useColorModeValue("green.500", "green.300");
   const incorrectColor = useColorModeValue("red.500", "red.300");
+  const selectedBg = useColorModeValue("blue.100", "blue.800");
 
   const currentQuestion = questions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
@@ -317,14 +314,22 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
       handleAnswerSelect(options[nextIndex]);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      if (userAnswers[selectedModule.module][currentQuestionIndex] !== null) {
-        if (currentQuestionIndex < questions.length - 1) {
-          handleNext();
-        } else {
-          if (submitButtonRef.current) {
-            submitButtonRef.current.focus();
+      const selectedAnswer =
+        userAnswers[selectedModule.module][currentQuestionIndex];
+      if (selectedAnswer !== null && !answerStatus) {
+        const isCorrect = selectedAnswer === currentQuestion.answer;
+        const status = isCorrect ? "correct" : "incorrect";
+        setAnswerStatus(status);
+        playSound(isCorrect ? correctSound : wrongSound);
+
+        setTimeout(() => {
+          setAnswerStatus(null);
+          if (currentQuestionIndex < questions.length - 1) {
+            handleNext();
+          } else {
+            handleSubmit();
           }
-        }
+        }, 1000); // 1-second delay to show feedback
       }
     }
   };
@@ -460,14 +465,21 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
                       if (isSelected) {
                         transform = "scale(1.02)";
                         boxShadow = "md";
-                        if (isCorrect) {
-                          bg = correctColor;
-                          color = "white";
-                          customBorderColor = correctColor;
+                        if (answerStatus) {
+                          // After Enter is pressed, show feedback color
+                          if (isCorrect) {
+                            bg = correctColor;
+                            color = "white";
+                            customBorderColor = correctColor;
+                          } else {
+                            bg = incorrectColor;
+                            color = "white";
+                            customBorderColor = incorrectColor;
+                          }
                         } else {
-                          bg = incorrectColor;
-                          color = "white";
-                          customBorderColor = incorrectColor;
+                          // Before Enter is pressed, show neutral selection color
+                          bg = selectedBg;
+                          customBorderColor = "blue.500";
                         }
                       }
 
