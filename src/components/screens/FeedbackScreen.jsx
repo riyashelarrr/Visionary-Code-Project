@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Box,
   Heading,
@@ -41,12 +41,27 @@ const feedbackOptions = [
   { level: "Excellent", icon: FaRegGrinBeam, color: "green.500" },
 ];
 
-const StarRatingInput = ({ label, value, onValueChange, hoveredValue, onHoveredValueChange }) => (
+const StarRatingInput = ({ label, value, onValueChange, hoveredValue, onHoveredValueChange, focusedIndex, onFocusedIndexChange, onKeyDown, inputRef }) => (
   <Field.Root>
     <Field.Label fontSize="lg">{label}</Field.Label>
-    <HStack>
+    <HStack
+      ref={inputRef}
+      role="radiogroup"
+      aria-label={label}
+      tabIndex={0}
+      onKeyDown={onKeyDown}
+      onFocus={() => {
+        if (focusedIndex === null && value > 0) {
+          onFocusedIndexChange(value - 1);
+        } else if (focusedIndex === null) {
+          onFocusedIndexChange(0);
+        }
+      }}
+      onBlur={() => onFocusedIndexChange(null)}
+    >
       {[...Array(5)].map((_, index) => {
         const starValue = index + 1;
+        const isFocused = focusedIndex === index;
         return (
           <Icon
             as={FaStar}
@@ -61,6 +76,12 @@ const StarRatingInput = ({ label, value, onValueChange, hoveredValue, onHoveredV
             onMouseEnter={() => onHoveredValueChange(starValue)}
             onMouseLeave={() => onHoveredValueChange(0)}
             cursor="pointer"
+            tabIndex={-1}
+            outline={isFocused ? "2px solid blue.500" : "none"}
+            outlineOffset="2px"
+            aria-label={`${starValue} star${starValue !== 1 ? "s" : ""}`}
+            role="radio"
+            aria-checked={starValue <= value}
           />
         );
       })}
@@ -71,20 +92,31 @@ const StarRatingInput = ({ label, value, onValueChange, hoveredValue, onHoveredV
 
 export const FeedbackScreen = ({ onFinish }) => {
   const [satisfaction, setSatisfaction] = useState(null);
+  const [focusedSatisfaction, setFocusedSatisfaction] = useState(0);
   const [clarity, setClarity] = useState(0);
   const [hoveredClarity, setHoveredClarity] = useState(0);
+  const [focusedClarity, setFocusedClarity] = useState(null);
   const [responsiveness, setResponsiveness] = useState(0);
   const [hoveredResponsiveness, setHoveredResponsiveness] = useState(0);
+  const [focusedResponsiveness, setFocusedResponsiveness] = useState(null);
   const [screenReader, setScreenReader] = useState(0);
   const [hoveredScreenReader, setHoveredScreenReader] = useState(0);
+  const [focusedScreenReader, setFocusedScreenReader] = useState(null);
   const [contrast, setContrast] = useState("");
   const [audioFeedback, setAudioFeedback] = useState(0);
   const [hoveredAudioFeedback, setHoveredAudioFeedback] = useState(0);
+  const [focusedAudioFeedback, setFocusedAudioFeedback] = useState(null);
   const [overallAccessibility, setOverallAccessibility] = useState(0);
   const [hoveredOverallAccessibility, setHoveredOverallAccessibility] = useState(0);
+  const [focusedOverallAccessibility, setFocusedOverallAccessibility] = useState(null);
   const [improvements, setImprovements] = useState("");
   const [likes, setLikes] = useState("");
   const [activeMic, setActiveMic] = useState(null);
+  
+  const satisfactionRef = useRef(null);
+  const clarityRef = useRef(null);
+  const improvementsTextareaRef = useRef(null);
+  const submitButtonRef = useRef(null);
 
   const { soundEnabled } = useAccessibility();
 
@@ -104,6 +136,13 @@ export const FeedbackScreen = ({ onFinish }) => {
       setLikes(transcript);
     }
   }, [transcript, activeMic]);
+
+  useEffect(() => {
+    // Auto-focus satisfaction section on mount
+    if (satisfactionRef.current) {
+      satisfactionRef.current.focus();
+    }
+  }, []);
 
 
   const cardBg = useColorModeValue("white", "gray.800");
@@ -150,6 +189,59 @@ export const FeedbackScreen = ({ onFinish }) => {
     }
   };
 
+  const handleSatisfactionKeyDown = (e) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      const nextIndex = focusedSatisfaction < feedbackOptions.length - 1 
+        ? focusedSatisfaction + 1 
+        : focusedSatisfaction;
+      setFocusedSatisfaction(nextIndex);
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      const prevIndex = focusedSatisfaction > 0 
+        ? focusedSatisfaction - 1 
+        : focusedSatisfaction;
+      setFocusedSatisfaction(prevIndex);
+    } else if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setSatisfaction(focusedSatisfaction);
+      playSound(navigationSound);
+      setTimeout(() => {
+        if (clarityRef.current) {
+          clarityRef.current.focus();
+        }
+      }, 0);
+    }
+  };
+
+  const handleStarRatingKeyDown = (currentValue, setValue, focusedIndex, setFocusedIndex, e) => {
+    // Use focusedIndex if it's not null/undefined, otherwise use currentValue - 1, or 0 if no value
+    const activeIndex = focusedIndex != null ? focusedIndex : (currentValue > 0 ? currentValue - 1 : 0);
+    
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault();
+      const nextIndex = activeIndex < 4 ? activeIndex + 1 : activeIndex;
+      setFocusedIndex(nextIndex);
+    } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault();
+      const prevIndex = activeIndex > 0 ? activeIndex - 1 : activeIndex;
+      setFocusedIndex(prevIndex);
+    } else if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      const selectedValue = activeIndex + 1;
+      setValue(selectedValue);
+      playSound(navigationSound);
+    } else if (e.key === "Tab" && !e.shiftKey) {
+      // Allow default Tab behavior to move to next element
+      setFocusedIndex(null);
+      return;
+    } else if (e.key === "Tab" && e.shiftKey) {
+      // Allow default Shift+Tab behavior to move to previous element
+      setFocusedIndex(null);
+      return;
+    }
+  };
+
   return (
     <CardRoot
       boxShadow="2xl"
@@ -164,23 +256,48 @@ export const FeedbackScreen = ({ onFinish }) => {
           <Heading as="h1" size="2xl" color={headingColor} textAlign="center">
             Please Provide Your Feedback
           </Heading>
-          <HStack justify="space-around" spacing={4} my={8}>
+          <HStack
+            justify="space-around"
+            spacing={4}
+            my={8}
+            role="radiogroup"
+            aria-label="Overall satisfaction"
+            onKeyDown={handleSatisfactionKeyDown}
+            tabIndex={0}
+            ref={satisfactionRef}
+          >
             {feedbackOptions.map((option, index) => (
               <VStack
                 key={index}
-                onClick={() => setSatisfaction(index)}
+                onClick={() => {
+                  setSatisfaction(index);
+                  setFocusedSatisfaction(index);
+                }}
                 cursor="pointer"
                 p={4}
                 borderRadius="lg"
-                bg={satisfaction === index ? selectedBg : "transparent"}
+                bg={
+                  satisfaction === index || focusedSatisfaction === index
+                    ? selectedBg
+                    : "transparent"
+                }
                 transition="background-color 0.2s ease-in-out"
+                tabIndex={-1}
+                role="radio"
+                aria-checked={satisfaction === index}
+                outline={focusedSatisfaction === index ? "2px solid blue.500" : "none"}
+                outlineOffset="2px"
               >
                 <Icon
                   as={option.icon}
                   w={20}
                   h={20}
                   color={option.color}
-                  transform={satisfaction === index ? "scale(1.1)" : "scale(1)"}
+                  transform={
+                    satisfaction === index || focusedSatisfaction === index
+                      ? "scale(1.1)"
+                      : "scale(1)"
+                  }
                   transition="transform 0.2s ease-in-out"
                 />
                 <Text fontWeight="medium" color={textColor}>
@@ -221,6 +338,18 @@ export const FeedbackScreen = ({ onFinish }) => {
                   onValueChange={setClarity}
                   hoveredValue={hoveredClarity}
                   onHoveredValueChange={setHoveredClarity}
+                  focusedIndex={focusedClarity}
+                  onFocusedIndexChange={setFocusedClarity}
+                  onKeyDown={(e) =>
+                    handleStarRatingKeyDown(
+                      clarity,
+                      setClarity,
+                      focusedClarity,
+                      setFocusedClarity,
+                      e
+                    )
+                  }
+                  inputRef={clarityRef}
                 />
                 <StarRatingInput
                   label="Did the app respond quickly to your actions?"
@@ -228,13 +357,35 @@ export const FeedbackScreen = ({ onFinish }) => {
                   onValueChange={setResponsiveness}
                   hoveredValue={hoveredResponsiveness}
                   onHoveredValueChange={setHoveredResponsiveness}
-                />
+                  focusedIndex={focusedResponsiveness}
+                  onFocusedIndexChange={setFocusedResponsiveness}
+                    onKeyDown={(e) =>
+                      handleStarRatingKeyDown(
+                        responsiveness,
+                        setResponsiveness,
+                        focusedResponsiveness,
+                        setFocusedResponsiveness,
+                        e
+                      )
+                    }
+                  />
                 <StarRatingInput
                   label="Screen reader compatibility"
                   value={screenReader}
                   onValueChange={setScreenReader}
                   hoveredValue={hoveredScreenReader}
                   onHoveredValueChange={setHoveredScreenReader}
+                  focusedIndex={focusedScreenReader}
+                  onFocusedIndexChange={setFocusedScreenReader}
+                  onKeyDown={(e) =>
+                    handleStarRatingKeyDown(
+                      screenReader,
+                      setScreenReader,
+                      focusedScreenReader,
+                      setFocusedScreenReader,
+                      e
+                    )
+                  }
                 />
                 <Field.Root>
                   <Field.Label fontSize="lg">Was the text and background contrast comfortable to read?</Field.Label>
@@ -262,6 +413,17 @@ export const FeedbackScreen = ({ onFinish }) => {
                   onValueChange={setAudioFeedback}
                   hoveredValue={hoveredAudioFeedback}
                   onHoveredValueChange={setHoveredAudioFeedback}
+                  focusedIndex={focusedAudioFeedback}
+                  onFocusedIndexChange={setFocusedAudioFeedback}
+                  onKeyDown={(e) =>
+                    handleStarRatingKeyDown(
+                      audioFeedback,
+                      setAudioFeedback,
+                      focusedAudioFeedback,
+                      setFocusedAudioFeedback,
+                      e
+                    )
+                  }
                 />
                 <StarRatingInput
                   label="Overall, was this app extremely accessible?"
@@ -269,6 +431,17 @@ export const FeedbackScreen = ({ onFinish }) => {
                   onValueChange={setOverallAccessibility}
                   hoveredValue={hoveredOverallAccessibility}
                   onHoveredValueChange={setHoveredOverallAccessibility}
+                  focusedIndex={focusedOverallAccessibility}
+                  onFocusedIndexChange={setFocusedOverallAccessibility}
+                  onKeyDown={(e) =>
+                    handleStarRatingKeyDown(
+                      overallAccessibility,
+                      setOverallAccessibility,
+                      focusedOverallAccessibility,
+                      setFocusedOverallAccessibility,
+                      e
+                    )
+                  }
                 />
                 <Field.Root>
                   <Field.Label fontSize="lg">
@@ -276,6 +449,7 @@ export const FeedbackScreen = ({ onFinish }) => {
                   </Field.Label>
                   <HStack width="100%">
                   <Textarea
+                    ref={improvementsTextareaRef}
                     value={improvements}
                     onChange={(e) => setImprovements(e.target.value)}
                     placeholder="Your suggestions..."
@@ -321,6 +495,7 @@ export const FeedbackScreen = ({ onFinish }) => {
           </Fieldset.Root>
 
           <Button
+            ref={submitButtonRef}
             onClick={handleSubmit}
             colorScheme="blue"
             size="lg"
