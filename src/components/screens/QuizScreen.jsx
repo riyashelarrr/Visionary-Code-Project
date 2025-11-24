@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 import {
   Box,
   Heading,
@@ -28,7 +28,23 @@ const initialAnswers = quizData.reduce((acc, module) => {
   return acc;
 }, {});
 
-const ResultsScreen = ({ userAnswers, onRestart, userName, onNext, questions }) => {
+const ResultsScreen = ({ userAnswers, onRestart, userName, onNext, questions, resultsRef, moduleListRef, onKeyDown }) => {
+  const headingRef = useRef(null);
+  const buttonsRef = useRef(null);
+  const tryAgainButtonRef = useRef(null);
+  const downloadButtonRef = useRef(null);
+  const continueButtonRef = useRef(null);
+  const [focusedButtonIndex, setFocusedButtonIndex] = useState(0);
+
+  useEffect(() => {
+    // Auto-focus results section when it appears
+    if (resultsRef?.current) {
+      setTimeout(() => {
+        resultsRef.current.focus();
+      }, 0);
+    }
+  }, []);
+
   const handleDownloadCertificate = () => {
     const pdf = new jsPDF({
       orientation: "landscape",
@@ -61,8 +77,65 @@ const ResultsScreen = ({ userAnswers, onRestart, userName, onNext, questions }) 
   const incorrectColor = useColorModeValue("red.500", "red.300");
   const borderColor = useColorModeValue("gray.200", "gray.600");
 
+  const handleResultsKeyDown = (e) => {
+    if (e.key === "ArrowLeft" && e.shiftKey) {
+      e.preventDefault();
+      if (moduleListRef?.current) {
+        moduleListRef.current.focus();
+      }
+      return;
+    }
+    
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      // Focus first button
+      setFocusedButtonIndex(0);
+      if (tryAgainButtonRef.current) {
+        tryAgainButtonRef.current.focus();
+      }
+      return;
+    }
+  };
+
+  const handleButtonsKeyDown = (e) => {
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      const nextIndex = focusedButtonIndex < 2 ? focusedButtonIndex + 1 : focusedButtonIndex;
+      setFocusedButtonIndex(nextIndex);
+      const buttons = [tryAgainButtonRef, downloadButtonRef, continueButtonRef];
+      if (buttons[nextIndex]?.current) {
+        buttons[nextIndex].current.focus();
+      }
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      const prevIndex = focusedButtonIndex > 0 ? focusedButtonIndex - 1 : focusedButtonIndex;
+      setFocusedButtonIndex(prevIndex);
+      const buttons = [tryAgainButtonRef, downloadButtonRef, continueButtonRef];
+      if (buttons[prevIndex]?.current) {
+        buttons[prevIndex].current.focus();
+      }
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      // Focus back to heading
+      if (headingRef.current) {
+        headingRef.current.focus();
+      }
+    }
+  };
+
   return (
-    <Box p={8} bg={cardBg} borderRadius="lg" boxShadow="xl" width="100%">
+    <Box
+      p={8}
+      bg={cardBg}
+      borderRadius="lg"
+      boxShadow="xl"
+      width="100%"
+      ref={resultsRef}
+      tabIndex={0}
+      onKeyDown={handleResultsKeyDown}
+      role="region"
+      aria-label="Quiz results"
+    >
       <VStack spacing={8}>
         <Box
           p={8}
@@ -73,6 +146,17 @@ const ResultsScreen = ({ userAnswers, onRestart, userName, onNext, questions }) 
           textAlign="center"
           borderWidth="1px"
           borderColor={borderColor}
+          ref={headingRef}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "ArrowDown") {
+              e.preventDefault();
+              setFocusedButtonIndex(0);
+              if (tryAgainButtonRef.current) {
+                tryAgainButtonRef.current.focus();
+              }
+            }
+          }}
         >
           <Heading size="2xl" color={headingColor} mb={4}>
             Quiz Complete!
@@ -89,18 +173,39 @@ const ResultsScreen = ({ userAnswers, onRestart, userName, onNext, questions }) 
           </Text>
         </Box>
 
-        <HStack spacing={4} justify="center">
-          <Button onClick={onRestart} colorScheme="blue" size="lg">
+        <HStack
+          spacing={4}
+          justify="center"
+          ref={buttonsRef}
+          role="group"
+          aria-label="Result actions"
+          onKeyDown={handleButtonsKeyDown}
+        >
+          <Button
+            ref={tryAgainButtonRef}
+            onClick={onRestart}
+            colorScheme="blue"
+            size="lg"
+            onFocus={() => setFocusedButtonIndex(0)}
+          >
             Try Again
           </Button>
           <Button
+            ref={downloadButtonRef}
             onClick={handleDownloadCertificate}
             colorScheme="green"
             size="lg"
+            onFocus={() => setFocusedButtonIndex(1)}
           >
             Download Certificate
           </Button>
-          <Button onClick={onNext} colorScheme="purple" size="lg">
+          <Button
+            ref={continueButtonRef}
+            onClick={onNext}
+            colorScheme="purple"
+            size="lg"
+            onFocus={() => setFocusedButtonIndex(2)}
+          >
             Continue
           </Button>
         </HStack>
@@ -189,6 +294,7 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   const submitButtonRef = useRef(null);
   const moduleListRef = useRef(null);
   const questionHeadingRef = useRef(null);
+  const resultsRef = useRef(null);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [showResults, setShowResults] = useState(false);
@@ -208,8 +314,16 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
   const handleModuleKeyDown = (e) => {
     if (e.key === "ArrowRight") {
       e.preventDefault();
-      if (questionHeadingRef.current) {
-        questionHeadingRef.current.focus();
+      if (showResults) {
+        // Navigate to results section
+        if (resultsRef.current) {
+          resultsRef.current.focus();
+        }
+      } else {
+        // Navigate to question heading
+        if (questionHeadingRef.current) {
+          questionHeadingRef.current.focus();
+        }
       }
       return;
     }
@@ -386,6 +500,8 @@ export const QuizScreen = ({ onNavigateToAccessibility, userName, onNext }) => {
               userName={userName}
               onNext={onNext}
               questions={questions}
+              resultsRef={resultsRef}
+              moduleListRef={moduleListRef}
             />
           ) : (
             <Box p={8} bg={cardBg} borderRadius="lg" boxShadow="2xl">
