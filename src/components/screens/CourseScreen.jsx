@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Box,
   Heading,
@@ -117,6 +117,12 @@ const VideoListItem = ({ video, isSelected, onSelect }) => {
 export const CourseScreen = ({ onNext, onNavigateToAccessibility }) => {
   const [selectedVideo, setSelectedVideo] = useState(courseVideos[0]);
   const { soundEnabled } = useAccessibility();
+  const moduleListRef = useRef(null);
+  const videoSectionRef = useRef(null);
+  const videoHeadingRef = useRef(null);
+  const accessibilityButtonRef = useRef(null);
+  const nextButtonRef = useRef(null);
+  const [focusedButtonIndex, setFocusedButtonIndex] = useState(null);
 
   const handleVideoSelect = (video) => {
     setSelectedVideo(video);
@@ -129,6 +135,13 @@ export const CourseScreen = ({ onNext, onNavigateToAccessibility }) => {
   };
 
   const handleKeyDown = (e) => {
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      if (videoSectionRef.current) {
+        videoSectionRef.current.focus();
+      }
+      return;
+    }
     if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
     e.preventDefault();
     const currentIndex = courseVideos.findIndex(
@@ -146,6 +159,52 @@ export const CourseScreen = ({ onNext, onNavigateToAccessibility }) => {
     setSelectedVideo(courseVideos[nextIndex]);
   };
 
+  const handleVideoSectionKeyDown = (e) => {
+    if (e.key === "ArrowLeft" && e.shiftKey) {
+      e.preventDefault();
+      if (moduleListRef.current) {
+        moduleListRef.current.focus();
+      }
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      // Focus the first button (Accessibility button)
+      setFocusedButtonIndex(0);
+      if (accessibilityButtonRef.current) {
+        accessibilityButtonRef.current.focus();
+      }
+    }
+  };
+
+  const handleButtonsKeyDown = (e) => {
+    const currentIndex = focusedButtonIndex ?? 0;
+    
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      const nextIndex = currentIndex < 1 ? 1 : currentIndex;
+      setFocusedButtonIndex(nextIndex);
+      if (nextIndex === 0 && accessibilityButtonRef.current) {
+        accessibilityButtonRef.current.focus();
+      } else if (nextIndex === 1 && nextButtonRef.current) {
+        nextButtonRef.current.focus();
+      }
+    } else if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      const prevIndex = currentIndex > 0 ? 0 : currentIndex;
+      setFocusedButtonIndex(prevIndex);
+      if (prevIndex === 0 && accessibilityButtonRef.current) {
+        accessibilityButtonRef.current.focus();
+      } else if (prevIndex === 1 && nextButtonRef.current) {
+        nextButtonRef.current.focus();
+      }
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      // Focus back to video heading
+      if (videoHeadingRef.current) {
+        videoHeadingRef.current.focus();
+      }
+    }
+  };
+
   const handleNext = () => {
     playSound(navigationSound);
     onNext();
@@ -157,23 +216,24 @@ export const CourseScreen = ({ onNext, onNavigateToAccessibility }) => {
 
   return (
     <Box p={{ base: 2, md: 8 }} width="100%">
-      <Grid
+    <Grid
         templateColumns={{ base: "1fr", lg: "1fr 2.5fr" }}
-        gap={8}
-        width="100%"
-        maxW="1600px"
+      gap={8}
+      width="100%"
+      maxW="1600px"
         mx="auto"
       >
         {/* Playlist Section */}
         <GridItem>
           <Box
-            p={4}
+      p={4}
             bg={cardBg}
             borderRadius="lg"
             boxShadow="xl"
             height="100%"
           >
             <VStack
+              ref={moduleListRef}
               spacing={3}
               align="stretch"
               onKeyDown={handleKeyDown}
@@ -184,54 +244,93 @@ export const CourseScreen = ({ onNext, onNavigateToAccessibility }) => {
               <Heading size="md" mb={2} color={headingColor}>
                 Python Course Modules
               </Heading>
-              {courseVideos.map((video) => (
+          {courseVideos.map((video) => (
                 <VideoListItem
                   key={video.id}
                   video={video}
                   isSelected={selectedVideo.id === video.id}
                   onSelect={handleVideoSelect}
                 />
-              ))}
-            </VStack>
+          ))}
+        </VStack>
           </Box>
-        </GridItem>
+      </GridItem>
 
         {/* Video Player Section */}
-        <GridItem>
-          <VStack spacing={6} align="stretch">
+      <GridItem>
+          <VStack
+            spacing={6}
+            align="stretch"
+            ref={videoSectionRef}
+            tabIndex={0}
+            onKeyDown={handleVideoSectionKeyDown}
+            role="region"
+            aria-label="Video player section"
+          >
             <Box p={6} bg={cardBg} borderRadius="lg" boxShadow="xl">
               <VStack spacing={5} align="stretch">
-                <AspectRatio ratio={16 / 9}>
-                  <iframe
-                    title={selectedVideo.title}
-                    src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}`}
-                    allowFullScreen
+          <AspectRatio ratio={16 / 9}>
+            <iframe
+              title={selectedVideo.title}
+              src={`https://www.youtube.com/embed/${selectedVideo.youtubeId}`}
+              allowFullScreen
                     style={{ borderRadius: "8px" }}
-                  />
-                </AspectRatio>
-                <Heading size="lg" pt={2} color={headingColor}>
+            />
+          </AspectRatio>
+                <Heading
+                  size="lg"
+                  pt={2}
+                  color={headingColor}
+                  ref={videoHeadingRef}
+                  tabIndex={-1}
+                  onKeyDown={(e) => {
+                    if (e.key === "ArrowDown") {
+                      e.preventDefault();
+                      // Focus will naturally go to buttons via Tab
+                    }
+                    if (e.key === "ArrowLeft" && e.shiftKey) {
+                      e.preventDefault();
+                      if (moduleListRef.current) {
+                        moduleListRef.current.focus();
+                      }
+                    }
+                  }}
+                >
                   {selectedVideo.title}
                 </Heading>
                 <Text fontSize="md" color={textColor} minH="50px">
                   {selectedVideo.description}
-                </Text>
+          </Text>
               </VStack>
             </Box>
-            <HStack justify="flex-end">
+            <HStack
+              justify="flex-end"
+              role="group"
+              aria-label="Course actions"
+              onKeyDown={handleButtonsKeyDown}
+            >
               <Button
+                ref={accessibilityButtonRef}
                 onClick={onNavigateToAccessibility}
                 size="lg"
                 variant="outline"
+                onFocus={() => setFocusedButtonIndex(0)}
               >
                 Accessibility
               </Button>
-              <Button onClick={handleNext} colorScheme="blue" size="lg">
+              <Button
+                ref={nextButtonRef}
+                onClick={handleNext}
+                colorScheme="blue"
+                size="lg"
+                onFocus={() => setFocusedButtonIndex(1)}
+              >
                 Next
               </Button>
             </HStack>
-          </VStack>
-        </GridItem>
-      </Grid>
+        </VStack>
+      </GridItem>
+    </Grid>
     </Box>
   );
 };
