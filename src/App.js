@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import { Provider } from "./components/ui/provider";
 import { Header } from "./components/Header";
@@ -17,7 +17,22 @@ function AppContent() {
   const [screen, setScreen] = useState(1);
   const [previousScreen, setPreviousScreen] = useState(null);
   const [userName, setUserName] = useState("");
-  const { soundEnabled } = useAccessibility();
+  const { soundEnabled, theme, setTheme } = useAccessibility();
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.ctrlKey && (event.key === 'b' || event.key === 'B')) {
+        event.preventDefault();
+        const isDark = theme === 'dark' || theme === 'highContrastDark';
+        setTheme(isDark ? 'light' : 'dark');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [theme, setTheme]);
 
   const playSound = (sound) => {
     if (soundEnabled) {
