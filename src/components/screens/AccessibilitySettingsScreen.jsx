@@ -130,6 +130,11 @@ export const AccessibilitySettingsScreen = ({ onNext, onBack }) => {
                 <RadioGroup.ItemIndicator />
                 <RadioGroup.ItemText>High Contrast (Light)</RadioGroup.ItemText>
               </RadioGroup.Item>
+              <RadioGroup.Item value="redPolarity">
+                <RadioGroup.ItemHiddenInput />
+                <RadioGroup.ItemIndicator />
+                <RadioGroup.ItemText>Red Polarity</RadioGroup.ItemText>
+              </RadioGroup.Item>
             </Grid>
           </RadioGroup.Root>
         </VStack>

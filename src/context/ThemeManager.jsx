@@ -22,11 +22,29 @@ const highContrastLightStyles = `
   }
 `;
 
+const redPolarityStyles = `
+  body.redPolarity {
+    --chakra-colors-chakra-body-bg: #000000;
+    --chakra-colors-chakra-body-text: #FF0000;
+    --chakra-colors-gray-500: #FF0000;
+    --chakra-colors-gray-100: #330000;
+    --chakra-colors-blue-100: #000000;
+    --chakra-colors-blue-500: #FF0000;
+    --chakra-colors-blue-600: #CC0000;
+  }
+  
+  body.redPolarity button, 
+  body.redPolarity [role="button"],
+  body.redPolarity a {
+    border: 1px solid #FF0000;
+  }
+`;
+
 const applyTheme = (theme, setColorMode) => {
-  document.body.classList.remove('light', 'dark', 'highContrastLight', 'highContrastDark');
+  document.body.classList.remove('light', 'dark', 'highContrastLight', 'highContrastDark', 'redPolarity');
   document.body.classList.add(theme);
 
-  if (theme.includes('dark')) {
+  if (theme.includes('dark') || theme === 'redPolarity') {
     setColorMode('dark');
   } else {
     setColorMode('light');
@@ -45,6 +63,8 @@ const applyTheme = (theme, setColorMode) => {
     styles = highContrastDarkStyles;
   } else if (theme === 'highContrastLight') {
     styles = highContrastLightStyles;
+  } else if (theme === 'redPolarity') {
+    styles = redPolarityStyles;
   }
   
   styleTag.innerHTML = styles;
