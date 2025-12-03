@@ -29,6 +29,36 @@ export const AccessibilityProvider = ({ children }) => {
     }
   };
 
+  React.useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Check if Control key is pressed
+      if (e.ctrlKey) {
+        switch (e.key.toLowerCase()) {
+          case 'w':
+            e.preventDefault();
+            updateStateAndStorage(setTheme, 'theme')('light');
+            break;
+          case 'b':
+            e.preventDefault();
+            updateStateAndStorage(setTheme, 'theme')('dark');
+            break;
+          case 'r':
+            e.preventDefault();
+            updateStateAndStorage(setTheme, 'theme')('redPolarity');
+            break;
+          default:
+            break;
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   const value = {
     fontSize,
     setFontSize: updateStateAndStorage(setFontSize, 'fontSize'),
