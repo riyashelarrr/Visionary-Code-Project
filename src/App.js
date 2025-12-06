@@ -12,6 +12,7 @@ import { ThemeManager } from "./context/ThemeManager";
 import { FeedbackScreen } from "./components/screens/FeedbackScreen";
 import navigationSound from "./assets/sounds/navigation.mp3";
 import { useAccessibility } from "./context/AccessibilityContext";
+import RegisterComponent from "./components/RegisterComponent";
 
 function AppContent() {
   const [screen, setScreen] = useState(1);
@@ -21,16 +22,16 @@ function AppContent() {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.ctrlKey && (event.key === 'b' || event.key === 'B')) {
+      if (event.ctrlKey && (event.key === "b" || event.key === "B")) {
         event.preventDefault();
-        const isDark = theme === 'dark' || theme === 'highContrastDark';
-        setTheme(isDark ? 'light' : 'dark');
+        const isDark = theme === "dark" || theme === "highContrastDark";
+        setTheme(isDark ? "light" : "dark");
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [theme, setTheme]);
 
@@ -74,10 +75,19 @@ function AppContent() {
         return <WelcomeScreen onNext={handleNext} />;
       case 2:
         return (
-          <AccessibilitySettingsScreen onNext={handleNext} onBack={handleBack} />
+          <AccessibilitySettingsScreen
+            onNext={handleNext}
+            onBack={handleBack}
+          />
         );
       case 3:
-        return <CourseScreen onNext={handleNext} onBack={handleBack} onNavigateToAccessibility={navigateToAccessibility} />;
+        return (
+          <CourseScreen
+            onNext={handleNext}
+            onBack={handleBack}
+            onNavigateToAccessibility={navigateToAccessibility}
+          />
+        );
       case 4:
         return (
           <QuizScreen
@@ -116,6 +126,7 @@ function App() {
     <Provider>
       <AccessibilityProvider>
         <ThemeManager />
+        {/* <RegisterComponent /> */}
         <AppContent />
       </AccessibilityProvider>
     </Provider>
